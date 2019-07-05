@@ -1,6 +1,5 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.PayGate;
 import com.mservice.paygate.models.CaptureMoMoRequest;
 import com.mservice.paygate.models.CaptureMoMoResponse;
 import com.mservice.paygate.processor.allinone.CaptureMoMo;
@@ -9,7 +8,6 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class CaptureMoMoTest {
 
@@ -54,7 +52,6 @@ class CaptureMoMoTest {
         });
 
     }
-
 
 
 }

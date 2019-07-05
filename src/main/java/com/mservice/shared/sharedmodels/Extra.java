@@ -3,7 +3,7 @@ package com.mservice.shared.sharedmodels;
 import java.util.HashMap;
 
 public class Extra {
-	
+
     private HashMap<String, String> data;
 
     public Extra() {
@@ -33,4 +33,5 @@ public class Extra {
     public void setData(HashMap<String, String> data) {
         this.data = data;
     }
+
 }

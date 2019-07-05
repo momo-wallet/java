@@ -5,32 +5,19 @@
  */
 package com.mservice.shared.utils;
 
-import java.io.UnsupportedEncodingException;
-import java.math.BigInteger;
-import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.KeyFactory;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.PublicKey;
-import java.security.PrivateKey;
-import java.security.spec.EncodedKeySpec;
-import java.security.spec.PKCS8EncodedKeySpec;
-import java.security.spec.X509EncodedKeySpec;
-import java.util.Formatter;
-import java.util.HashMap;
-import java.util.Map;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
 import javax.crypto.Mac;
 import javax.crypto.spec.SecretKeySpec;
-
-import com.google.gson.Gson;
-import com.mservice.shared.constants.Parameter;
-import org.apache.commons.codec.binary.Base64;
-
-//import sun.misc.BASE64Decoder;
-//import sun.misc.BASE64Encoder;
+import java.io.UnsupportedEncodingException;
+import java.math.BigInteger;
+import java.nio.charset.StandardCharsets;
+import java.security.*;
+import java.security.spec.EncodedKeySpec;
+import java.security.spec.PKCS8EncodedKeySpec;
+import java.security.spec.X509EncodedKeySpec;
+import java.util.Formatter;
 
 /**
  * @author khangdoan
@@ -57,13 +44,13 @@ public class Encoder {
         SecretKeySpec secretKeySpec = new SecretKeySpec(secretKey.getBytes(), HMAC_SHA256);
         Mac mac = Mac.getInstance(HMAC_SHA256);
         mac.init(secretKeySpec);
-        byte[] rawHmac = mac.doFinal(data.getBytes("UTF-8"));
+        byte[] rawHmac = mac.doFinal(data.getBytes(StandardCharsets.UTF_8));
         return toHexString(rawHmac);
     }
 
     public static String getSHA(String data) throws Exception {
         MessageDigest md = MessageDigest.getInstance("SHA");
-        md.update(data.getBytes("UTF8"));
+        md.update(data.getBytes(StandardCharsets.UTF_8));
         byte[] ba = md.digest();
         StringBuilder sb = new StringBuilder(ba.length * 2);
 
@@ -133,7 +120,7 @@ public class Encoder {
         pubk = keyFactory.generatePublic(publicKeySpec);
         Cipher cipher = Cipher.getInstance("RSA");
         cipher.init(Cipher.ENCRYPT_MODE, pubk);
-        return new String(encoder.encodeToString(cipher.doFinal(dataBytes)).replace("\r", ""));
+        return encoder.encodeToString(cipher.doFinal(dataBytes)).replace("\r", "");
 //        return new String(encoder.encode(cipher.doFinal(dataBytes)).replace("\r", ""));
     }
 
@@ -151,7 +138,5 @@ public class Encoder {
             return "";
         }
     }
-
-
 
 }

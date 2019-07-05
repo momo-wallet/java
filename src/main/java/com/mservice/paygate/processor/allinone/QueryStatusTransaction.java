@@ -1,19 +1,16 @@
 package com.mservice.paygate.processor.allinone;
 
+import com.mservice.paygate.models.QueryStatusTransactionRequest;
+import com.mservice.paygate.models.QueryStatusTransactionResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.paygate.models.QueryStatusTransactionRequest;
-import com.mservice.paygate.models.QueryStatusTransactionResponse;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
-
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author hainguyen
@@ -25,13 +22,41 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
         super(environment);
     }
 
+    /**
+     * Check Query Transaction Status on Payment Gateway
+     *
+     * @param orderId   MoMo's order ID
+     * @param requestId request ID
+     **/
+    public static QueryStatusTransactionResponse process(Environment env, String orderId, String requestId) throws Exception {
+        Console.log("========================== START QUERY QUERY STATUS ==================");
+        try {
+            QueryStatusTransaction queryStatusTransaction = new QueryStatusTransaction(env);
+            QueryStatusTransactionRequest queryStatusRequest = queryStatusTransaction.createQueryRequest(orderId, requestId);
+            QueryStatusTransactionResponse queryStatusResponse = queryStatusTransaction.execute(queryStatusRequest);
+
+            // Your handler
+            if (queryStatusResponse.getErrorCode() == 0) {
+                Console.debug("payType::", queryStatusResponse.getPayType());
+                Console.debug("transId::", queryStatusResponse.getTransId());
+                Console.debug("orderId::", queryStatusResponse.getOrderId());
+            }
+            Console.log("========================== END QUERY QUERY STATUS ==================");
+
+            return queryStatusResponse;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public QueryStatusTransactionResponse execute(QueryStatusTransactionRequest request) throws MoMoException {
 
         try {
             String payload = getGson().toJson(request, QueryStatusTransactionRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
 
             if (response.getStatus() != 200) {
                 throw new MoMoException("Error API");
@@ -70,12 +95,6 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
                 throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,7 +102,7 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
 
     }
 
-    public QueryStatusTransactionRequest createQueryRequest(String requestId, String orderId) {
+    public QueryStatusTransactionRequest createQueryRequest(String orderId, String requestId) {
         String rawData =
                 Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
                         "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
@@ -111,34 +130,5 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
                 .build();
         return request;
     }
-
-    /**
-     * Check Query Transaction Status on Payment Gateway
-     *
-     * @param orderId   MoMo's order ID
-     * @param requestId request ID
-     **/
-    public static QueryStatusTransactionResponse process(Environment env, String orderId, String requestId) throws Exception {
-        Console.log("========================== START QUERY QUERY STATUS ==================");
-        try {
-            QueryStatusTransaction queryStatusTransaction = new QueryStatusTransaction(env);
-            QueryStatusTransactionRequest queryStatusRequest = queryStatusTransaction.createQueryRequest(orderId, requestId);
-            QueryStatusTransactionResponse queryStatusResponse = queryStatusTransaction.execute(queryStatusRequest);
-
-            // Your handler
-            if (queryStatusResponse.getErrorCode() == 0) {
-                Console.debug("payType::", queryStatusResponse.getPayType());
-                Console.debug("transId::", queryStatusResponse.getTransId());
-                Console.debug("orderId::", queryStatusResponse.getOrderId());
-            }
-            Console.log("========================== END QUERY QUERY STATUS ==================");
-
-            return queryStatusResponse;
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
-    }
-
 
 }

@@ -1,24 +1,22 @@
 package com.mservice.processor.paygate;
 
-
 import com.mservice.paygate.PayGate;
-import com.mservice.paygate.models.*;
+import com.mservice.paygate.models.CaptureMoMoResponse;
+import com.mservice.paygate.models.PayATMResponse;
+import com.mservice.paygate.models.QueryStatusTransactionResponse;
+import com.mservice.paygate.models.RefundStatusResponse;
 import com.mservice.paygate.processor.allinone.CaptureMoMo;
 import com.mservice.paygate.processor.allinone.PayATM;
 import com.mservice.paygate.processor.allinone.QueryStatusTransaction;
 import com.mservice.paygate.processor.allinone.RefundStatus;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.utils.Encoder;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.params.ParameterizedTest;
-import org.junit.jupiter.params.provider.ValueSource;
 
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 
 public class PayGateTest {
     Environment environment = Environment.selectEnv("dev");
@@ -39,32 +37,6 @@ public class PayGateTest {
     String returnURL = "https://google.com.vn";
     String notifyURL = "https://google.com.vn";
     String extraData = "";
-
-    @Test
-    @DisplayName("Development Environment")
-    public void devEnv() {
-        Environment env = Environment.selectEnv("dev");
-        assertEquals(env.getTarget(), "development", "Should be dev environment");
-        assertEquals("https://test-payment.momo.vn/gw_payment/transactionProcessor", env.getMomoEndpoint(), "Incorrect URL for Dev Env");
-    }
-
-    @Test
-    @DisplayName("Production Environment")
-    public void prodEnv() {
-        Environment env = Environment.selectEnv("prod");
-        assertEquals("production", env.getTarget(), "Should be prod environment");
-        assertEquals("https://payment.momo.vn/gw_payment/transactionProcessor", env.getMomoEndpoint(),"Incorrect URL for Prod Env");
-
-    }
-
-    @ParameterizedTest
-    @ValueSource(strings = { "", "radar", "tee hee", "123456", "  ", "/t" })
-    @DisplayName("Exception Environment")
-    void exceptionEnvTesting() {
-        Exception exception = assertThrows(IllegalArgumentException.class,
-                () -> Environment.selectEnv(""));
-        assertEquals("MoMo doesnt provide other environment: dev and prod", exception.getMessage());
-    }
 
     @Test
     @DisplayName("Check RSA encoding and decoding")
@@ -109,7 +81,6 @@ public class PayGateTest {
 
     @Test
     @DisplayName("Refund Status Process")
-    @Disabled
     void refundStatus() throws Exception {
 
         List<RefundStatusResponse> response = RefundStatus.process(environment, "1560997093046", "1560997093046");

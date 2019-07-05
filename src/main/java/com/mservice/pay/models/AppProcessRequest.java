@@ -2,12 +2,21 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class AppProcessRequest extends Request {
+public class AppProcessRequest extends PayRequest {
 
     private String appData;
     private String hash;
     private double version;
     private Integer payType;
+
+    @Builder
+    public AppProcessRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String appData, String hash, double version, Integer payType) {
+        super(partnerCode, partnerRefId, customerNumber, description);
+        this.appData = appData;
+        this.hash = hash;
+        this.version = version;
+        this.payType = payType;
+    }
 
     public String getAppData() {
         return appData;
@@ -38,15 +47,6 @@ public class AppProcessRequest extends Request {
     }
 
     public void setPayType(Integer payType) {
-        this.payType = payType;
-    }
-
-    @Builder
-    public AppProcessRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String appData, String hash, double version, Integer payType) {
-        super(partnerCode, partnerRefId, customerNumber, description);
-        this.appData = appData;
-        this.hash = hash;
-        this.version = version;
         this.payType = payType;
     }
 }

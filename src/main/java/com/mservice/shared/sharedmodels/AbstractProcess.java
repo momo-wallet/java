@@ -45,6 +45,5 @@ public abstract class AbstractProcess<T, V> {
         }
     }
 
-
     public abstract V execute(T request) throws MoMoException;
 }

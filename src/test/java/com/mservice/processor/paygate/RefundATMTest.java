@@ -1,14 +1,13 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.PayGate;
-import com.mservice.paygate.processor.allinone.RefundATM;
-import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.paygate.models.RefundATMRequest;
 import com.mservice.paygate.models.RefundATMResponse;
-import org.junit.jupiter.api.Disabled;
+import com.mservice.paygate.processor.allinone.RefundATM;
+import com.mservice.shared.sharedmodels.Environment;
 import org.junit.jupiter.api.Test;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 class RefundATMTest {
     Environment env = Environment.selectEnv("dev");
@@ -20,12 +19,12 @@ class RefundATMTest {
     String bankCode = "SML";
 
     @Test
-    @Disabled
-    void execute() throws Exception {
+    void testShouldNotCreateNewRequest() throws Exception {
         RefundATMRequest request = refundATM.createRefundATMRequest(requestId, orderId, amount, transId, bankCode);
-        assertDoesNotThrow(() -> {});
+        assertEquals("d6938e069ed7c8f98aba7f4780c1714889ffe18a11d718dd910ba443a81bf65a", request.getSignature(), "Wrong Signature -- Problem with Hash");
+        assertEquals("refundMoMoATM", request.getRequestType(), "Wrong Request Type -- Must be refundMoMoATM");
 
         RefundATMResponse response = refundATM.execute(request);
-        assertDoesNotThrow(() -> {});
+        assertNull(response, "Wrong Processing Result after executing RefundATMRequest");
     }
 }

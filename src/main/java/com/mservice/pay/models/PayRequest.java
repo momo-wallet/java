@@ -1,13 +1,13 @@
 package com.mservice.pay.models;
 
-public class Request {
+public class PayRequest {
 
     private String partnerCode;
     private String partnerRefId;
     private String customerNumber;
     private String description;
 
-    public Request(String partnerCode, String partnerRefId, String customerNumber, String description) {
+    public PayRequest(String partnerCode, String partnerRefId, String customerNumber, String description) {
         this.partnerCode = partnerCode;
         this.partnerRefId = partnerRefId;
         this.customerNumber = customerNumber;

@@ -1,11 +1,13 @@
 package com.mservice.pay.processor.notallinone;
 
 import com.google.gson.Gson;
-import com.mservice.pay.models.*;
+import com.mservice.pay.models.TransactionRefundRequest;
+import com.mservice.pay.models.TransactionRefundResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
@@ -19,12 +21,27 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
         super(environment);
     }
 
+    public static TransactionRefundResponse process(Environment env, String partnerRefId, String storeId, String publicKey, String momoTransId,
+                                                    Long amount, String description, String requestId, double version) throws Exception {
+        Console.log("========================== START TRANSACTION REFUND PROCESS  ==================");
+
+        TransactionRefund transactionRefund = new TransactionRefund(env);
+        TransactionRefundRequest transactionRefundRequest = transactionRefund.createTransactionRefundRequest(partnerRefId, storeId, publicKey, momoTransId, amount, description, requestId, version);
+        TransactionRefundResponse transactionRefundResponse = transactionRefund.execute(transactionRefundRequest);
+
+        // Your handler
+
+        Console.log("========================== END TRANSACTION REFUND PROCESS ==================");
+
+        return transactionRefundResponse;
+    }
+
     @Override
     public TransactionRefundResponse execute(TransactionRefundRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, TransactionRefundRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_REFUND_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_REFUND_URI, payload);
 
             TransactionRefundResponse transactionRefundResponse = getGson().fromJson(response.getData(), TransactionRefundResponse.class);
 
@@ -33,8 +50,8 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
                 Console.error("getTransactionRefundRequest::errorMessage::", transactionRefundResponse.getMessage());
 
             } else {
-                Console.debug("getTransactionRefundRequest::transid::", transactionRefundResponse.getTransid().toString());
-                Console.debug("getTransactionRefundRequest::amount::", transactionRefundResponse.getAmount().toString());
+                Console.debug("getTransactionRefundRequest::transid::" + transactionRefundResponse.getTransid());
+                Console.debug("getTransactionRefundRequest::amount::" + transactionRefundResponse.getAmount());
                 Console.debug("getTransactionRefundRequest::partnerRefId::", transactionRefundResponse.getPartnerRefId());
             }
 
@@ -78,21 +95,6 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
         }
 
         return null;
-    }
-
-    public static TransactionRefundResponse process(Environment env, String partnerRefId, String storeId, String publicKey, String momoTransId,
-                                                    Long amount, String description, String requestId, double version) throws Exception {
-        Console.log("========================== START TRANSACTION REFUND PROCESS  ==================");
-
-        TransactionRefund transactionRefund = new TransactionRefund(env);
-        TransactionRefundRequest transactionRefundRequest = transactionRefund.createTransactionRefundRequest(partnerRefId, storeId, publicKey, momoTransId, amount, description, requestId, version);
-        TransactionRefundResponse transactionRefundResponse = transactionRefund.execute(transactionRefundRequest);
-
-        // Your handler
-
-        Console.log("========================== END TRANSACTION REFUND PROCESS ==================");
-
-        return transactionRefundResponse;
     }
 
 }

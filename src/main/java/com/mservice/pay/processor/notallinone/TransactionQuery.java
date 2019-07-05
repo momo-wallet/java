@@ -1,11 +1,14 @@
 package com.mservice.pay.processor.notallinone;
 
 import com.google.gson.Gson;
-import com.mservice.pay.models.*;
+import com.mservice.pay.models.MoMoJson;
+import com.mservice.pay.models.TransactionQueryRequest;
+import com.mservice.pay.models.TransactionQueryResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
@@ -20,12 +23,26 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
         super(environment);
     }
 
+    public static TransactionQueryResponse process(Environment env, String partnerRefId, String requestId, String publicKey, String momoTransId, double version) throws Exception {
+        Console.log("========================== START TRANSACTION QUERY STATUS ==================");
+
+        TransactionQuery transactionQuery = new TransactionQuery(env);
+        TransactionQueryRequest transactionQueryRequest = transactionQuery.createTransactionQueryRequest(partnerRefId, requestId, publicKey, momoTransId, version);
+        TransactionQueryResponse transactionQueryResponse = transactionQuery.execute(transactionQueryRequest);
+
+        // Your handler
+
+        Console.log("========================== END TRANSACTION QUERY STATUS ==================");
+
+        return transactionQueryResponse;
+    }
+
     @Override
     public TransactionQueryResponse execute(TransactionQueryRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, TransactionQueryRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_STATUS_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_STATUS_URI, payload);
 
             TransactionQueryResponse transactionQueryResponse = getGson().fromJson(response.getData(), TransactionQueryResponse.class);
 
@@ -34,10 +51,10 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
                 Console.error("getTransactionQueryRequest::errorMessage::", transactionQueryResponse.getMessage());
 
             } else {
-                TransactionQueryResponse.Json data = transactionQueryResponse.getData();
+                MoMoJson data = transactionQueryResponse.getData();
 
                 Console.debug("getTransactionQueryRequest::billId::", data.getBillId());
-                Console.debug("getTransactionQueryRequest::amount::", data.getAmount().toString());
+                Console.debug("getTransactionQueryRequest::amount::" + data.getAmount());
                 Console.debug("getTransactionQueryRequest::Phone Number::", data.getPhoneNumber());
             }
             return transactionQueryResponse;
@@ -78,20 +95,6 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
         }
 
         return null;
-    }
-
-    public static TransactionQueryResponse process(Environment env, String partnerRefId, String requestId, String publicKey, String momoTransId, double version) throws Exception {
-        Console.log("========================== START TRANSACTION QUERY STATUS ==================");
-
-        TransactionQuery transactionQuery = new TransactionQuery(env);
-        TransactionQueryRequest transactionQueryRequest = transactionQuery.createTransactionQueryRequest(partnerRefId, requestId, publicKey, momoTransId, version);
-        TransactionQueryResponse transactionQueryResponse = transactionQuery.execute(transactionQueryRequest);
-
-        // Your handler
-
-        Console.log("========================== END TRANSACTION QUERY STATUS ==================");
-
-        return transactionQueryResponse;
     }
 
 

@@ -1,20 +1,17 @@
 package com.mservice.paygate.processor.allinone;
 
+import com.mservice.paygate.models.PayATMRequest;
+import com.mservice.paygate.models.PayATMResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.sharedmodels.PartnerInfo;
-import com.mservice.paygate.models.PayATMRequest;
-import com.mservice.paygate.models.PayATMResponse;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
-
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 /**
  * @author hainguyen
@@ -26,12 +23,43 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
         super(environment);
     }
 
+    public static PayATMResponse process(Environment env, String requestId, String orderId, String bankCode, String amount, String orderInfo, String returnUrl,
+                                         String notifyUrl, String extra) throws Exception {
+        Console.log("========================== START ATM PAYMENT =====================");
+        try {
+
+            PayATM atmProcess = new PayATM(env);
+            PayATMRequest payATMRequest = atmProcess.createPayWithATMRequest(requestId, orderId, bankCode, amount, orderInfo, returnUrl, notifyUrl, extra, env.getPartnerInfo());
+            PayATMResponse payATMResponse = atmProcess.execute(payATMRequest);
+
+            // Your handler
+            if (payATMResponse.getErrorCode() != 0) {
+                Console.error("errorCode::", payATMResponse.getErrorCode() + "");
+                Console.error("errorMessage::", payATMResponse.getMessage());
+                Console.error("localMessage::", payATMResponse.getLocalMessage());
+            } else {
+                // To do something here ...
+                // You can get payUrl to redirect new tab browser or open link on iframe to serve payment
+                // Using deeplink to open MoMo App
+                // Using qrCodeUrl to generate QrCode with data is this
+                Console.debug("ATMpayURL::", payATMResponse.getPayUrl() + "");
+            }
+
+            Console.log("========================== END ATM PAYMENT =====================");
+            return payATMResponse;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return null;
+    }
+
     @Override
     public PayATMResponse execute(PayATMRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, PayATMRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
 
             if (response.getStatus() != 200) {
                 throw new MoMoException("Error API");
@@ -71,18 +99,11 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
                 throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
             }
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
         return null;
     }
-
 
     public PayATMRequest createPayWithATMRequest(String requestId, String orderId, String bankCode, String amount, String orderInfo, String returnUrl,
                                                  String notifyUrl, String extra, PartnerInfo partnerInfo) {
@@ -123,38 +144,7 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
         } catch (Exception e) {
             e.printStackTrace();
             throw new IllegalArgumentException("Invalid params notallinonepay ATM Request");
-
         }
-    }
-
-    public static PayATMResponse process(Environment env, String requestId, String orderId, String bankCode, String amount, String orderInfo, String returnUrl,
-                                        String notifyUrl, String extra) throws Exception {
-        Console.log("========================== START ATM PAYMENT =====================");
-        try {
-            PayATM atmProcess = new PayATM(env);
-            PayATMRequest payATMRequest = atmProcess.createPayWithATMRequest(requestId, orderId, bankCode, amount, orderInfo, returnUrl, notifyUrl, extra, env.getPartnerInfo());
-            PayATMResponse payATMResponse = atmProcess.execute(payATMRequest);
-            //handle exception
-            // Your handler
-            if (payATMResponse.getErrorCode() != 0) {
-                Console.error("errorCode::", payATMResponse.getErrorCode() + "");
-                Console.error("errorMessage::", payATMResponse.getMessage());
-                Console.error("localMessage::", payATMResponse.getLocalMessage());
-            } else {
-                // To do something here ...
-                // You can get payUrl to redirect new tab browser or open link on iframe to serve payment
-                // Using deeplink to open MoMo App
-                // Using qrCodeUrl to generate QrCode with data is this
-                Console.debug("ATMpayURL::", payATMResponse.getPayUrl() + "");
-            }
-
-            Console.log("========================== END ATM PAYMENT =====================");
-            return payATMResponse;
-
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 
 }

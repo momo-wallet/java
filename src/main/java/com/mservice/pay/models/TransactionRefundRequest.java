@@ -3,6 +3,10 @@ package com.mservice.pay.models;
 import lombok.Builder;
 
 public class TransactionRefundRequest extends TransactionQueryRequest {
+    private Long amount;
+    private String storeId;
+    private String requestId;
+
     @Builder(builderMethodName = "refundBuilder")
     public TransactionRefundRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String hash, Double version, String momoTransId, Long amount, String storeId, String requestId) {
         super(partnerCode, partnerRefId, customerNumber, description, hash, version, momoTransId);
@@ -10,10 +14,6 @@ public class TransactionRefundRequest extends TransactionQueryRequest {
         this.storeId = storeId;
         this.requestId = requestId;
     }
-
-    private Long amount;
-    private String storeId;
-    private String requestId;
 
     public Long getAmount() {
         return amount;

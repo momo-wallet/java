@@ -28,14 +28,12 @@ public class RequestType {
     public final static String TRANS_TYPE_MOMO_WALLET = "momo_wallet";
 
     public final static String FINISH_WITH_MOMO_ATM = "finishProcessMoMoATM"; //
-
     public final static String PAY_WITH_QR = "finishProcessMoMoATM"; //
 
     public final static String CONFIRM_APP_TRANSACTION = "capture";
     public final static String CANCEL_APP_TRANSACTION = "revertAuthorize";
 
-
-    /**
+    /*
      * ========================= USING INTERNAL ==============================
      */
     public final static String QUERY_STATUS_PAY_WITH_APP = "queryStatusPayWithApp";

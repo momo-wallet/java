@@ -32,4 +32,5 @@ public class PartnerClientInfo {
     public void setFullName(String fullName) {
         this.fullName = fullName;
     }
+
 }

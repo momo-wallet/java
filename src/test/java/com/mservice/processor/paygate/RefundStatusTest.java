@@ -1,16 +1,15 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.PayGate;
 import com.mservice.paygate.models.RefundStatusRequest;
+import com.mservice.paygate.models.RefundStatusResponse;
 import com.mservice.paygate.processor.allinone.RefundStatus;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.paygate.models.RefundStatusResponse;
-import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class RefundStatusTest {
     Environment env = Environment.selectEnv("dev");
@@ -18,7 +17,6 @@ class RefundStatusTest {
     String orderId = "1560997093046";
 
     @Test
-    @Disabled
     void refundStatusTest() throws Exception {
         assertDoesNotThrow(() -> {
 

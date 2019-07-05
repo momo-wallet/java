@@ -2,7 +2,7 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class PayConfirmationRequest extends Request {
+public class PayConfirmationRequest extends PayRequest {
     private String momoTransId;
     private String requestType;
     private String requestId;

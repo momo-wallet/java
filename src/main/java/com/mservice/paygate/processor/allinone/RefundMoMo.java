@@ -1,19 +1,16 @@
 package com.mservice.paygate.processor.allinone;
 
+import com.mservice.paygate.models.RefundMoMoRequest;
+import com.mservice.paygate.models.RefundMoMoResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.paygate.models.RefundMoMoRequest;
-import com.mservice.paygate.models.RefundMoMoResponse;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
-
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoResponse> {
 
@@ -21,11 +18,24 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
         super(environment);
     }
 
+    public static RefundMoMoResponse process(Environment env, String requestId, String orderId, String amount, String transId)
+            throws Exception {
+        Console.log("========================== START MOMO REFUND PROCESS  ==================");
+
+        RefundMoMo refundMoMo = new RefundMoMo(env);
+        RefundMoMoRequest request = refundMoMo.createRefundRequest(requestId, orderId, amount, transId);
+        RefundMoMoResponse response = refundMoMo.execute(request);
+
+        Console.log("========================== END MOMO REFUND PROCESS ==================");
+
+        return response;
+    }
+
     public RefundMoMoResponse execute(RefundMoMoRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, RefundMoMoRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
 
             if (response.getStatus() != 200) {
                 throw new MoMoException("Error API");
@@ -61,16 +71,9 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
                 throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
-
         return null;
     }
 
@@ -106,20 +109,4 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
                 .build();
         return request;
     }
-
-    public static RefundMoMoResponse process(Environment env, String requestId, String orderId, String amount, String transId)
-            throws Exception {
-        Console.log("========================== START MOMO REFUND PROCESS  ==================");
-
-        RefundMoMo refundMoMo = new RefundMoMo(env);
-        RefundMoMoRequest request = refundMoMo.createRefundRequest(requestId, orderId, amount, transId);
-        RefundMoMoResponse response = refundMoMo.execute(request);
-
-        Console.log("========================== END MOMO REFUND PROCESS ==================");
-
-        return response;
-
-    }
-
-
 }

@@ -1,12 +1,12 @@
 package com.mservice.pay.models;
 
-public class Response {
+public class PayResponse {
 
     private Integer status;
     private String message;
     private String signature;
 
-    public Response(Integer status, String message, String signature) {
+    public PayResponse(Integer status, String message, String signature) {
         this.status = status;
         this.message = message;
         this.signature = signature;

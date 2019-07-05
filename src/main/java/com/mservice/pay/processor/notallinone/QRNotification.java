@@ -9,19 +9,31 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
-public class QRNotification extends AbstractProcess<QRNotifyResponse, QRNotifyResponse> {
+public class QRNotification extends AbstractProcess<QRNotifyRequest, String> {
     public QRNotification(Environment environment) {
         super(environment);
     }
 
-    //send response to confirm with MoMo server
-    //execute here
-    //return
-    @Override
-    public QRNotifyResponse execute(QRNotifyResponse qrNotifyRequest) throws MoMoException {
+    public static String process(Environment env, QRNotifyRequest request) throws Exception {
+        Console.log("========================== START QR NOTIFICATION PAYMENT PROCESS ==================");
 
+        QRNotification qrNotification = new QRNotification(env);
+        QRNotifyRequest qrNotifyRequest = qrNotification.handleNotifyRequest(request);
+        String qrNotifyResponse;
+
+        if (qrNotifyRequest == null) {
+            qrNotifyResponse = "";
+        } else {
+            qrNotifyResponse = qrNotification.execute(qrNotifyRequest);
+        }
+
+        Console.log("========================== END QR NOTIFICATION PROCESS ==================");
+        return qrNotifyResponse;
+    }
+
+    @Override
+    public String execute(QRNotifyRequest qrNotifyRequest) throws MoMoException {
         try {
             String requestRawData = new StringBuilder()
                     .append(Parameter.AMOUNT).append("=").append(qrNotifyRequest.getAmount()).append("&")
@@ -46,23 +58,27 @@ public class QRNotification extends AbstractProcess<QRNotifyResponse, QRNotifyRe
                     .build();
 
             String payload = getGson().toJson(qrNotifyResponse, QRNotifyResponse.class);
-
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_QR_CODE_URI, payload);
-
-            if (response.getStatus() != 200) {
-                throw new MoMoException("Error API");
-            }
-
+            return payload;
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        return null;
+        return "";
     }
 
     //check the request from MoMo server
     public QRNotifyRequest handleNotifyRequest(QRNotifyRequest qrNotifyRequest) {
         try {
+
+            if (!qrNotifyRequest.getPartnerCode().equals(partnerInfo.getPartnerCode())) {
+                throw new IllegalArgumentException("Wrong PartnerCode");
+            }
+            if (!qrNotifyRequest.getAccessKey().equals(partnerInfo.getAccessKey())) {
+                throw new IllegalArgumentException("Wrong Access Key");
+            }
+            if (!qrNotifyRequest.getTransType().equals(RequestType.TRANS_TYPE_MOMO_WALLET)) {
+                throw new IllegalArgumentException("Wrong TransType -- must always be momo_wallet");
+            }
+
             String requestRawData = new StringBuilder()
                     .append(Parameter.ACCESS_KEY).append("=").append(qrNotifyRequest.getAccessKey()).append("&")
                     .append(Parameter.AMOUNT).append("=").append(qrNotifyRequest.getAmount()).append("&")
@@ -92,17 +108,6 @@ public class QRNotification extends AbstractProcess<QRNotifyResponse, QRNotifyRe
         }
 
         return null;
-    }
-
-    public static QRNotifyResponse process(Environment env, QRNotifyRequest request) throws Exception {
-        Console.log("========================== START QR NOTIFICATION PAYMENT PROCESS ==================");
-
-        QRNotification qrNotification = new QRNotification(env);
-        QRNotifyRequest qrNotifyRequest = qrNotification.handleNotifyRequest(request);
-        QRNotifyResponse qrNotifyResponse = qrNotification.execute(qrNotifyRequest);
-
-        Console.log("========================== END QR NOTIFICATION PROCESS ==================");
-        return qrNotifyResponse;
     }
 
 

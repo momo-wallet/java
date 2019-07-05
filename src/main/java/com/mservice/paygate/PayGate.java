@@ -1,9 +1,6 @@
 package com.mservice.paygate;
 
 import com.google.gson.Gson;
-import com.mservice.paygate.models.*;
-import com.mservice.paygate.processor.allinone.*;
-import com.mservice.shared.sharedmodels.PartnerInfo;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.utils.Console;
@@ -41,12 +38,12 @@ public class PayGate {
         try {
             Environment environment = Environment.selectEnv("dev");
 
-            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
-//            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1561972787557");
+//            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
+//            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
 //
 //            //Refund -- Manual Testing
-//            Response response = RefundMoMo.process(environment, "1561972787557", orderId, "7000", queryStatusTransactionResponse.getTransId());
-//            RefundStatus.process(environment, "1561972787557", "1561972787557");
+//            Response response = RefundMoMo.process(environment, "1562135830002", orderId, "10000", "2304963912");
+//            RefundStatus.process(environment, "1562135830002", "1561972787557");
 //
 //            // current version is 2.0
             String publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkpa+qMXS6O11x7jBGo9W3yxeHEsAdyDE" +
@@ -65,7 +62,7 @@ public class PayGate {
 //            PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
 //
 //            RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
-//            RefundStatus.process(environment, "1561972550332", "1561972550332");
+//            RefundStatus.process(environment, "1562135830002", "1561972787557");
 //            generateRSA(customerNumber, "247", "247", "nhatnguyen", environment.getPartnerInfo().getPartnerCode(), amount, publicKey);
 
         } catch (Exception e) {
@@ -95,7 +92,5 @@ public class PayGate {
         Console.log("========================== END CREATE RSA TEST DATA ==================");
 
         return hashRSA;
-
     }
-
 }

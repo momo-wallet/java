@@ -6,6 +6,8 @@ import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClientBuilder;
 
+import java.nio.charset.StandardCharsets;
+
 public class HttpClient {
 
     @SuppressWarnings("deprecation")
@@ -27,7 +29,7 @@ public class HttpClient {
 
             byte[] bytes = IOUtils.toByteArray(httpResponse.getEntity().getContent());
 
-            String responseStr = new String(bytes, "UTF-8");
+            String responseStr = new String(bytes, StandardCharsets.UTF_8);
 
             response.setStatus(httpResponse.getStatusLine().getStatusCode());
             response.setData(responseStr);

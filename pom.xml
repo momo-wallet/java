@@ -9,9 +9,14 @@
     <version>1.0-SNAPSHOT</version>
     <packaging>jar</packaging>
 
-    <name>paygate</name>
+    <name>momopayment</name>
     <description>MoMo Payment Java Library</description>
-    <url>https://github.com/lnguyen99/momo-java-payment</url>
+    <url>https://github.com/lnguyen99/paygate</url>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <doclint>none</doclint>
+    </properties>
 
     <licenses>
         <license>
@@ -34,16 +39,13 @@
             <organization>M-Service JSC</organization>
             <organizationUrl>https://momo.vn/</organizationUrl>
         </developer>
-    </developers>
-
-    <contributors>
-        <contributor>
+        <developer>
             <name>Linh Nguyen</name>
             <email>linh.nguyen7@mservice.com.vn</email>
             <organization>M-Service JSC</organization>
             <organizationUrl>https://momo.vn/</organizationUrl>
-        </contributor>
-    </contributors>
+        </developer>
+    </developers>
 
     <build>
         <plugins>
@@ -96,7 +98,8 @@
                         </goals>
                         <configuration>
                             <transformers>
-                                <transformer implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
+                                <transformer
+                                        implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>
                                         com.mservice.paygate.PayGate
                                     </mainClass>
@@ -189,12 +192,6 @@
         </plugins>
     </build>
 
-    <properties>
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <doclint>none</doclint>
-    </properties>
-
-
     <dependencies>
         <dependency>
             <groupId>org.apache.httpcomponents</groupId>
@@ -212,7 +209,6 @@
             <artifactId>commons-lang</artifactId>
             <version>2.0</version>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/commons-io/commons-io -->
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
@@ -224,7 +220,6 @@
             <version>1.18.8</version>
             <scope>provided</scope>
         </dependency>
-        <!-- https://mvnrepository.com/artifact/org.junit.jupiter/junit-jupiter-api -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
@@ -245,9 +240,9 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/lnguyen99/momo-java-payment.git</connection>
-        <developerConnection>scm:git:git@github.com:lnguyen99/momo-java-payment.git</developerConnection>
-        <url>https://github.com/lnguyen99/momo-java-payment</url>
+        <connection>scm:git:git://github.com/lnguyen99/paygate.git</connection>
+        <developerConnection>scm:git:git@github.com:lnguyen99/paygate.git</developerConnection>
+        <url>https://github.com/lnguyen99/paygate</url>
         <tag>HEAD</tag>
     </scm>
 

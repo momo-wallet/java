@@ -2,7 +2,7 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class AppProcessResponse extends Response {
+public class AppProcessResponse extends PayResponse {
     private String transid;
     private Long amount;
 
@@ -13,20 +13,20 @@ public class AppProcessResponse extends Response {
         this.amount = amount;
     }
 
-    public void setTransId(String transId) {
-        this.transid = transId;
-    }
-
-    public void setAmount(Long amount) {
-        this.amount = amount;
-    }
-
     public String getTransId() {
         return transid;
     }
 
+    public void setTransId(String transId) {
+        this.transid = transId;
+    }
+
     public Long getAmount() {
         return amount;
+    }
+
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 
 }

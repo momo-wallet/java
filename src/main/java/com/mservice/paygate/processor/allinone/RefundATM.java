@@ -1,18 +1,16 @@
 package com.mservice.paygate.processor.allinone;
 
+import com.mservice.paygate.models.RefundATMRequest;
+import com.mservice.paygate.models.RefundATMResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
-import com.mservice.paygate.models.*;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
-
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 
 public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMResponse> {
 
@@ -20,20 +18,32 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
         super(environment);
     }
 
+    public static RefundATMResponse process(Environment env, String orderId, String requestId, String amount, String transId, String bankCode)
+            throws Exception {
+        Console.log("========================== START ATM REFUND PROCESS  ==================");
+        RefundATM refundATM = new RefundATM(env);
+        RefundATMRequest request = refundATM.createRefundATMRequest(requestId, orderId, amount, transId, bankCode);
+        RefundATMResponse response = refundATM.execute(request);
+
+        Console.log("========================== END ATM REFUND PROCESS ==================");
+
+        return response;
+    }
+
     public RefundATMResponse execute(RefundATMRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, RefundATMRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
 
             if (response.getStatus() != 200) {
                 throw new MoMoException("Error API");
             }
-            
+
             RefundATMResponse refundATMResponse = getGson().fromJson(response.getData(), RefundATMResponse.class);
 
             errorMoMoProcess(refundATMResponse.getErrorCode());
-            
+
             String rawData = Parameter.PARTNER_CODE + "=" + refundATMResponse.getPartnerCode() +
                     "&" + Parameter.ACCESS_KEY + "=" + refundATMResponse.getAccessKey() +
                     "&" + Parameter.REQUEST_ID + "=" + refundATMResponse.getRequestId() +
@@ -60,12 +70,6 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                 throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
 
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -106,18 +110,4 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                 .build();
         return request;
     }
-
-    public static RefundATMResponse process(Environment env, String orderId, String requestId, String amount, String transId, String bankCode)
-            throws Exception {
-        Console.log("========================== START ATM REFUND PROCESS  ==================");
-        RefundATM refundATM = new RefundATM(env);
-        RefundATMRequest request = refundATM.createRefundATMRequest(requestId, orderId, amount, transId, bankCode);
-        RefundATMResponse response = refundATM.execute(request);
-
-        Console.log("========================== END ATM REFUND PROCESS ==================");
-
-        return response;
-    }
-
-
 }

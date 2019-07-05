@@ -1,20 +1,18 @@
 package com.mservice.pay.processor.notallinone;
 
 import com.google.gson.Gson;
-import com.mservice.shared.constants.Parameter;
-import com.mservice.shared.exception.MoMoException;
 import com.mservice.pay.models.AppProcessRequest;
 import com.mservice.pay.models.AppProcessResponse;
+import com.mservice.shared.constants.Parameter;
+import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
 
-import java.io.UnsupportedEncodingException;
 import java.nio.charset.StandardCharsets;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -24,12 +22,26 @@ public class AppPay extends AbstractProcess<AppProcessRequest, AppProcessRespons
         super(environment);
     }
 
+    public static AppProcessResponse process(Environment env, String partnerRefId, String partnerTransId, long amount, String partnerName,
+                                             String storeId, String storeName, String publicKey, String customerNumber, String appData,
+                                             String description, double version, int payType) throws Exception {
+        Console.log("========================== START APP PAYMENT PROCESS ==================");
+
+        AppPay appPay = new AppPay(env);
+        AppProcessRequest appProcessRequest = appPay.createAppPayProcessingRequest(partnerRefId,
+                partnerTransId, amount, partnerName, storeId, storeName, publicKey, customerNumber, appData, description, version, payType);
+        AppProcessResponse appProcessResponse = appPay.execute(appProcessRequest);
+
+        Console.log("========================== END APP PAYMENT PROCESS ==================");
+        return appProcessResponse;
+    }
+
     public AppProcessResponse execute(AppProcessRequest request) throws MoMoException {
 
         try {
             String payload = getGson().toJson(request, AppProcessRequest.class);
 
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_APP_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_APP_URI, payload);
 
             AppProcessResponse appProcessResponse = getGson().fromJson(response.getData(), AppProcessResponse.class);
 
@@ -51,7 +63,7 @@ public class AppPay extends AbstractProcess<AppProcessRequest, AppProcessRespons
             }
 
             Console.debug("getAppPaymentResponse::transid::", appProcessResponse.getTransId());
-            Console.debug("getAppPaymentResponse::amount::", appProcessResponse.getAmount().toString());
+            Console.debug("getAppPaymentResponse::amount::" + appProcessResponse.getAmount());
             Console.debug("getAppPaymentResponse::MoMo Signature::", appProcessResponse.getSignature());
 
             if (signature.equals(appProcessResponse.getSignature())) {
@@ -59,15 +71,6 @@ public class AppPay extends AbstractProcess<AppProcessRequest, AppProcessRespons
             } else {
                 throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
             }
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (NullPointerException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -114,20 +117,6 @@ public class AppPay extends AbstractProcess<AppProcessRequest, AppProcessRespons
         }
 
         return null;
-    }
-
-    public static AppProcessResponse process(Environment env, String partnerRefId, String partnerTransId, long amount, String partnerName,
-                                             String storeId, String storeName, String publicKey, String customerNumber, String appData,
-                                             String description, double version, int payType) throws Exception {
-        Console.log("========================== START APP PAYMENT PROCESS ==================");
-
-        AppPay appPay = new AppPay(env);
-        AppProcessRequest appProcessRequest = appPay.createAppPayProcessingRequest(partnerRefId,
-                partnerTransId, amount, partnerName, storeId, storeName, publicKey, customerNumber, appData, description, version, payType);
-        AppProcessResponse appProcessResponse = appPay.execute(appProcessRequest);
-
-        Console.log("========================== END APP PAYMENT PROCESS ==================");
-        return appProcessResponse;
     }
 
 

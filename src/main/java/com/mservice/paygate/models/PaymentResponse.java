@@ -2,7 +2,7 @@ package com.mservice.paygate.models;
 
 import java.util.Date;
 
-public class PaymentResponse extends Response {
+public class PaymentResponse extends PayGateResponse {
 
     String payUrl;
     String deeplink;

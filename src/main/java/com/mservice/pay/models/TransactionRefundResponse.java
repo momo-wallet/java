@@ -2,7 +2,11 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class TransactionRefundResponse extends Response {
+public class TransactionRefundResponse extends PayResponse {
+    private String partnerRefId;
+    private Long transid;
+    private Long amount;
+
     @Builder(builderMethodName = "refundBuilder")
     public TransactionRefundResponse(Integer status, String message, String signature, String partnerRefId, Long transid, Long amount) {
         super(status, message, signature);
@@ -10,10 +14,6 @@ public class TransactionRefundResponse extends Response {
         this.transid = transid;
         this.amount = amount;
     }
-
-    private String partnerRefId;
-    private Long transid;
-    private Long amount;
 
     public String getPartnerRefId() {
         return partnerRefId;

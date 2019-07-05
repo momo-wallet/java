@@ -1,19 +1,20 @@
 package com.mservice.paygate.processor.allinone;
 
-import com.google.gson.*;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.mservice.paygate.models.RefundStatusRequest;
+import com.mservice.paygate.models.RefundStatusResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
-import com.mservice.paygate.models.*;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.Execute;
 import com.mservice.shared.utils.Console;
 import com.mservice.shared.utils.Encoder;
 import com.mservice.shared.utils.HttpResponse;
 
-import java.io.UnsupportedEncodingException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -27,6 +28,18 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
         super(environment);
     }
 
+    public static List<RefundStatusResponse> process(Environment env, String requestId, String orderId) throws Exception {
+        Console.log("========================== START MOMO REFUND STATUS ==================");
+
+        RefundStatus refundStatus = new RefundStatus(env);
+        RefundStatusRequest request = refundStatus.createRefundStatusRequest(requestId, orderId);
+        List<RefundStatusResponse> response = refundStatus.execute(request);
+
+        Console.log("========================== END MOMO REFUND STATUS ==================");
+
+        return response;
+    }
+
     @Override
     public List<RefundStatusResponse> execute(RefundStatusRequest RefundStatusRequest) throws MoMoException {
 
@@ -34,21 +47,19 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
 
         try {
             String payload = getGson().toJson(RefundStatusRequest, RefundStatusRequest.class);
-            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
 
             if (response.getStatus() != 200) {
                 throw new MoMoException("Error API");
             }
 
             JsonParser jsonParser = new JsonParser();
-            //Convert from array to object
             JsonArray jsonArray = (JsonArray) jsonParser.parse(response.getData());
 
             Console.debug("===========================");
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonElement jsonElement = jsonArray.get(i);
                 JsonElement obj = jsonElement.getAsJsonObject();
-//                JsonElement obj = jsonElement.getAsJsonObject().get("jsonObject").getAsJsonObject().get("map");
 
                 RefundStatusResponse refundMoMoResponse = getGson().fromJson(obj, RefundStatusResponse.class);
 
@@ -64,7 +75,6 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                         "&" + Parameter.MESSAGE + "=" + refundMoMoResponse.getMessage() +
                         "&" + Parameter.LOCAL_MESSAGE + "=" + refundMoMoResponse.getLocalMessage() +
                         "&" + Parameter.REQUEST_TYPE + "=" + RequestType.QUERY_REFUND;
-
 
                 Console.debug("getrefundStatusResponse::transId::" + refundMoMoResponse.getTransId());
                 Console.debug("getrefundStatusResponse::rawDataBeforeHash::" + rawData);
@@ -84,21 +94,12 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                     throw new MoMoException("Wrong signature from MoMo side - please contact with us");
                 }
             }
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (ClassCastException e) {
-            e.printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
+
         return responseList;
-
     }
-
 
     public RefundStatusRequest createRefundStatusRequest(String requestId, String orderId) {
         String rawData =
@@ -128,19 +129,6 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                 .build();
         return refundStatusRequest;
     }
-
-    public static List<RefundStatusResponse> process(Environment env, String orderId, String requestId) throws Exception {
-        Console.log("========================== START MOMO REFUND STATUS ==================");
-
-        RefundStatus refundStatus = new RefundStatus(env);
-        RefundStatusRequest request = refundStatus.createRefundStatusRequest(requestId, orderId);
-        List<RefundStatusResponse> response = refundStatus.execute(request);
-
-        Console.log("========================== END MOMO REFUND STATUS ==================");
-
-        return response;
-    }
-
 
 }
 

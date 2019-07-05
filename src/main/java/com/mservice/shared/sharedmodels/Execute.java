@@ -3,7 +3,6 @@ package com.mservice.shared.sharedmodels;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.utils.*;
 
-
 @SuppressWarnings("restriction")
 public class Execute {
 

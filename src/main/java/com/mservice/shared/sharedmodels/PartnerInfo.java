@@ -1,7 +1,7 @@
 package com.mservice.shared.sharedmodels;
 
 public class PartnerInfo {
-	
+
     private String accessKey;
     private String partnerCode;
     private String secretKey;
@@ -35,4 +35,5 @@ public class PartnerInfo {
     public void setSecretKey(String secretKey) {
         this.secretKey = secretKey;
     }
+
 }

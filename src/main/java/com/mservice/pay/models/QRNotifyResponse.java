@@ -2,8 +2,8 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class QRNotifyResponse extends Response {
-//Partner's server sends response to MoMo's server to confirm receiving notallinonepay notification
+public class QRNotifyResponse extends PayResponse {
+
     private String partnerRefId;
     private String momoTransId;
     private Long amount;
