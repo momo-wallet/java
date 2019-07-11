@@ -1,4 +1,4 @@
-package com.mservice.paygate.models;
+package com.mservice.allinone.models;
 
 import lombok.Builder;
 

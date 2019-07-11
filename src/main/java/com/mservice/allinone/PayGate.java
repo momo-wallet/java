@@ -1,23 +1,17 @@
-package com.mservice.paygate;
+package com.mservice.allinone;
 
 import com.google.gson.Gson;
-import com.mservice.paygate.models.PayATMResponse;
-import com.mservice.paygate.processor.allinone.PayATM;
-import com.mservice.paygate.processor.allinone.RefundATM;
-import com.mservice.paygate.processor.allinone.RefundStatus;
+import com.mservice.allinone.models.PayATMResponse;
+import com.mservice.allinone.processor.allinone.PayATM;
+import com.mservice.allinone.processor.allinone.RefundATM;
+import com.mservice.allinone.processor.allinone.RefundStatus;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.PartnerInfo;
 import com.mservice.shared.utils.Encoder;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Properties;
 
 /**
  * Demo
@@ -44,10 +38,10 @@ public class PayGate {
         String bankCode = "SML";
         String customerNumber = "0963181714";
 
-        Environment environment = (new PayGate()).selectEnv("dev");
+        Environment environment = Environment.selectEnv("dev", "paygate");
 
-//          Please uncomment the code to actually use the neccessary All-In-One gateway payment processes
-//          Remember to change the IDs accordingly
+//          Please uncomment the code to actually use the necessary All-In-One gateway payment processes
+//          Remember to change the IDs
 
 //            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
 //            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
@@ -67,13 +61,13 @@ public class PayGate {
         String phoneNumber = "0963181714";
         String username = "nhat.nguyen";
 
-            orderId = String.valueOf(System.currentTimeMillis());
-            PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
+        orderId = String.valueOf(System.currentTimeMillis());
+        PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
 
-            RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
-            RefundStatus.process(environment, "1562135830002", "1561972787557");
+        RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
+        RefundStatus.process(environment, "1562135830002", "1561972787557");
 
-            generateRSA(customerNumber, "247", "247", "nhatnguyen", environment.getPartnerInfo().getPartnerCode(), amount, publicKey);
+        generateRSA(customerNumber, "247", "247", "nhatnguyen", environment.getPartnerInfo().getPartnerCode(), amount, publicKey);
 
     }
 
@@ -94,39 +88,5 @@ public class PayGate {
         String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
         return hashRSA;
-    }
-
-    /*
-     * Sample Code to select environment
-     * Change your environment.properties file appropriately to use this code
-     * Make sure the MoMoEndpoint is correct for different processes (All-In-One gateway vs Pay)
-     *
-     * @param target name of the environment (dev or prod)
-     * @return
-     **/
-    public Environment selectEnv(String target) {
-        try (InputStream input = getClass().getClassLoader().getResourceAsStream("environment.properties")) {
-
-            Properties prop = new Properties();
-            prop.load(input);
-
-            switch (target) {
-                case "dev":
-                    PartnerInfo devInfo = new PartnerInfo(prop.getProperty("DEV_PARTNER_CODE"), prop.getProperty("DEV_ACCESS_KEY"), prop.getProperty("DEV_SECRET_KEY"));
-                    Environment dev = new Environment(prop.getProperty("DEV_MOMO_ENDPOINT"), devInfo, prop.getProperty("DEV"));
-                    return dev;
-                case "prod":
-                    PartnerInfo prodInfo = new PartnerInfo(prop.getProperty("PROD_PARTNER_CODE"), prop.getProperty("PROD_ACCESS_KEY"), prop.getProperty("PROD_SECRET_KEY"));
-                    Environment production = new Environment(prop.getProperty("PROD_MOMO_ENDPOINT"), prodInfo, prop.getProperty("PROD"));
-                    return production;
-                default:
-                    throw new IllegalArgumentException("MoMo doesnt provide other environment: dev and prod");
-            }
-        } catch (FileNotFoundException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        return null;
     }
 }

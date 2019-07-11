@@ -1,7 +1,7 @@
-package com.mservice.paygate.processor.allinone;
+package com.mservice.allinone.processor.allinone;
 
-import com.mservice.paygate.models.QueryStatusTransactionRequest;
-import com.mservice.paygate.models.QueryStatusTransactionResponse;
+import com.mservice.allinone.models.QueryStatusTransactionRequest;
+import com.mservice.allinone.models.QueryStatusTransactionResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;

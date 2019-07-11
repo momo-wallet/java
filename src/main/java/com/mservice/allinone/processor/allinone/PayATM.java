@@ -1,7 +1,7 @@
-package com.mservice.paygate.processor.allinone;
+package com.mservice.allinone.processor.allinone;
 
-import com.mservice.paygate.models.PayATMRequest;
-import com.mservice.paygate.models.PayATMResponse;
+import com.mservice.allinone.models.PayATMRequest;
+import com.mservice.allinone.models.PayATMResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;

@@ -1,7 +1,7 @@
-package com.mservice.paygate.processor.allinone;
+package com.mservice.allinone.processor.allinone;
 
-import com.mservice.paygate.models.RefundMoMoRequest;
-import com.mservice.paygate.models.RefundMoMoResponse;
+import com.mservice.allinone.models.RefundMoMoRequest;
+import com.mservice.allinone.models.RefundMoMoResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
@@ -62,7 +62,7 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
             }
 
         } catch (Exception e) {
-            logger.error("[RefundMoMoProcess] " , e);
+            logger.error("[RefundMoMoProcess] ", e);
         }
         return null;
     }
@@ -83,7 +83,7 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
 
             logger.debug("[RefundMoMoRequest] rawData: " + rawData + ", [Signature] -> " + signature);
         } catch (Exception e) {
-            logger.error("[RefundMoMoProcess] " , e);
+            logger.error("[RefundMoMoProcess] ", e);
         }
 
         RefundMoMoRequest request = RefundMoMoRequest

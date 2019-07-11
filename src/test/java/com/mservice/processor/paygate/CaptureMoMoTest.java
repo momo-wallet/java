@@ -1,8 +1,8 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.models.CaptureMoMoRequest;
-import com.mservice.paygate.models.CaptureMoMoResponse;
-import com.mservice.paygate.processor.allinone.CaptureMoMo;
+import com.mservice.allinone.models.CaptureMoMoRequest;
+import com.mservice.allinone.models.CaptureMoMoResponse;
+import com.mservice.allinone.processor.allinone.CaptureMoMo;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.api.DisplayName;

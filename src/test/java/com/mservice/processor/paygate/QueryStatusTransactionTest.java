@@ -1,8 +1,8 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.models.QueryStatusTransactionRequest;
-import com.mservice.paygate.models.QueryStatusTransactionResponse;
-import com.mservice.paygate.processor.allinone.QueryStatusTransaction;
+import com.mservice.allinone.models.QueryStatusTransactionRequest;
+import com.mservice.allinone.models.QueryStatusTransactionResponse;
+import com.mservice.allinone.processor.allinone.QueryStatusTransaction;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.params.ParameterizedTest;

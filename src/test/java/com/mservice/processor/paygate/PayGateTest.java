@@ -1,14 +1,14 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.PayGate;
-import com.mservice.paygate.models.CaptureMoMoResponse;
-import com.mservice.paygate.models.PayATMResponse;
-import com.mservice.paygate.models.QueryStatusTransactionResponse;
-import com.mservice.paygate.models.RefundStatusResponse;
-import com.mservice.paygate.processor.allinone.CaptureMoMo;
-import com.mservice.paygate.processor.allinone.PayATM;
-import com.mservice.paygate.processor.allinone.QueryStatusTransaction;
-import com.mservice.paygate.processor.allinone.RefundStatus;
+import com.mservice.allinone.PayGate;
+import com.mservice.allinone.models.CaptureMoMoResponse;
+import com.mservice.allinone.models.PayATMResponse;
+import com.mservice.allinone.models.QueryStatusTransactionResponse;
+import com.mservice.allinone.models.RefundStatusResponse;
+import com.mservice.allinone.processor.allinone.CaptureMoMo;
+import com.mservice.allinone.processor.allinone.PayATM;
+import com.mservice.allinone.processor.allinone.QueryStatusTransaction;
+import com.mservice.allinone.processor.allinone.RefundStatus;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import com.mservice.shared.utils.Encoder;

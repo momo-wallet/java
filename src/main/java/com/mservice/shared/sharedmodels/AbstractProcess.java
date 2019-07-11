@@ -12,10 +12,9 @@ import org.apache.logging.log4j.Logger;
  */
 public abstract class AbstractProcess<T, V> {
 
+    protected final Logger logger;
     protected PartnerInfo partnerInfo;
     protected Environment environment;
-    protected final Logger logger;
-
     protected Execute execute = new Execute();
 
     public AbstractProcess(Environment environment) {

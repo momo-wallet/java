@@ -1,8 +1,8 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.models.RefundATMRequest;
-import com.mservice.paygate.models.RefundATMResponse;
-import com.mservice.paygate.processor.allinone.RefundATM;
+import com.mservice.allinone.models.RefundATMRequest;
+import com.mservice.allinone.models.RefundATMResponse;
+import com.mservice.allinone.processor.allinone.RefundATM;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.api.Test;

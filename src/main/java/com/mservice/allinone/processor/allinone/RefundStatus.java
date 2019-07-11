@@ -1,10 +1,10 @@
-package com.mservice.paygate.processor.allinone;
+package com.mservice.allinone.processor.allinone;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import com.mservice.paygate.models.RefundStatusRequest;
-import com.mservice.paygate.models.RefundStatusResponse;
+import com.mservice.allinone.models.RefundStatusRequest;
+import com.mservice.allinone.models.RefundStatusResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;

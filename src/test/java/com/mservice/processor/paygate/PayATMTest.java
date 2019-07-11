@@ -1,8 +1,8 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.paygate.models.PayATMRequest;
-import com.mservice.paygate.models.PayATMResponse;
-import com.mservice.paygate.processor.allinone.PayATM;
+import com.mservice.allinone.models.PayATMRequest;
+import com.mservice.allinone.models.PayATMResponse;
+import com.mservice.allinone.processor.allinone.PayATM;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.api.DisplayName;
