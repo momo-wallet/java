@@ -2,12 +2,12 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class POSProcessResponse {
+public class POSPayResponse {
     private Integer status;
     private MoMoJson message;
 
     @Builder
-    public POSProcessResponse(Integer status, MoMoJson message) {
+    public POSPayResponse(Integer status, MoMoJson message) {
         this.status = status;
         this.message = message;
     }

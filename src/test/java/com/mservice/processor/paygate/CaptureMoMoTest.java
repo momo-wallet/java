@@ -4,14 +4,15 @@ import com.mservice.paygate.models.CaptureMoMoRequest;
 import com.mservice.paygate.models.CaptureMoMoResponse;
 import com.mservice.paygate.processor.allinone.CaptureMoMo;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.*;
 
 class CaptureMoMoTest {
-
-    Environment environment = Environment.selectEnv("dev");
+    PartnerInfo devInfo = new PartnerInfo("MOMOLRJZ20181206", "mTCKt9W3eU1m39TW", "KqBEecvaJf1nULnhPF5htpG3AMtDIOlD");
+    Environment environment = new Environment("https://test-payment.momo.vn/gw_payment/transactionProcessor", devInfo, "development");
     String amount = "30000";
     String orderInfo = "Pay With MoMo";
     String returnURL = "https://google.com.vn";

@@ -4,13 +4,16 @@ import com.mservice.paygate.models.QueryStatusTransactionRequest;
 import com.mservice.paygate.models.QueryStatusTransactionResponse;
 import com.mservice.paygate.processor.allinone.QueryStatusTransaction;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 class QueryStatusTransactionTest {
-    Environment env = Environment.selectEnv("dev");
+    PartnerInfo devInfo = new PartnerInfo("MOMOLRJZ20181206", "mTCKt9W3eU1m39TW", "KqBEecvaJf1nULnhPF5htpG3AMtDIOlD");
+    Environment env = new Environment("https://test-payment.momo.vn/gw_payment/transactionProcessor", devInfo, "development");
+
     String orderId = "1560763203689";
     String requestId = "1560760777994";
 

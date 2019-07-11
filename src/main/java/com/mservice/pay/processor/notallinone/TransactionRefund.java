@@ -7,10 +7,8 @@ import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.Execute;
-import com.mservice.shared.utils.Console;
+import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -21,52 +19,41 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
         super(environment);
     }
 
-    public static TransactionRefundResponse process(Environment env, String partnerRefId, String storeId, String publicKey, String momoTransId,
-                                                    Long amount, String description, String requestId, double version) throws Exception {
-        Console.log("========================== START TRANSACTION REFUND PROCESS  ==================");
-
+    public static TransactionRefundResponse process(Environment env, String partnerRefId, String storeId, String publicKey, String momoTransId, Long amount, String description, String requestId, double version) throws Exception {
         TransactionRefund transactionRefund = new TransactionRefund(env);
-        TransactionRefundRequest transactionRefundRequest = transactionRefund.createTransactionRefundRequest(partnerRefId, storeId, publicKey, momoTransId, amount, description, requestId, version);
-        TransactionRefundResponse transactionRefundResponse = transactionRefund.execute(transactionRefundRequest);
 
-        // Your handler
+        try {
+            TransactionRefundRequest transactionRefundRequest = transactionRefund.createTransactionRefundRequest(partnerRefId, storeId, publicKey, momoTransId, amount, description, requestId, version);
+            TransactionRefundResponse transactionRefundResponse = transactionRefund.execute(transactionRefundRequest);
+            return transactionRefundResponse;
 
-        Console.log("========================== END TRANSACTION REFUND PROCESS ==================");
-
-        return transactionRefundResponse;
+        } catch (Exception e) {
+            transactionRefund.logger.error("[TransactionRefundProcess] ", e);
+        }
+        return null;
     }
 
     @Override
     public TransactionRefundResponse execute(TransactionRefundRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, TransactionRefundRequest.class);
-
-            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_REFUND_URI, payload);
+            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), payload);
+            if (response.getStatus() != 200) {
+                throw new MoMoException("[TransactionRefundResponse] [" + request.getPartnerRefId() + "] -> Error API");
+            }
 
             TransactionRefundResponse transactionRefundResponse = getGson().fromJson(response.getData(), TransactionRefundResponse.class);
 
-            if (transactionRefundResponse.getStatus() != 0) {
-                Console.error("getTransactionRefundRequest::errorCode::", transactionRefundResponse.getStatus() + "");
-                Console.error("getTransactionRefundRequest::errorMessage::", transactionRefundResponse.getMessage());
-
-            } else {
-                Console.debug("getTransactionRefundRequest::transid::" + transactionRefundResponse.getTransid());
-                Console.debug("getTransactionRefundRequest::amount::" + transactionRefundResponse.getAmount());
-                Console.debug("getTransactionRefundRequest::partnerRefId::", transactionRefundResponse.getPartnerRefId());
-            }
-
             return transactionRefundResponse;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[TransactionRefundResponse] ", e);
         }
         return null;
     }
 
-    public TransactionRefundRequest createTransactionRefundRequest(String partnerRefId, String storeId, String publicKey, String momoTransId,
-                                                                   Long amount, String description, String requestId, double version) {
+    public TransactionRefundRequest createTransactionRefundRequest(String partnerRefId, String storeId, String publicKey, String momoTransId, Long amount, String description, String requestId, double version) {
 
         try {
-
             Map<String, Object> rawData = new HashMap<>();
             rawData.put(Parameter.PARTNER_REF_ID, partnerRefId);
             rawData.put(Parameter.PARTNER_CODE, partnerInfo.getPartnerCode());
@@ -80,8 +67,7 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            Console.debug("createTransactionRefundRequest::rawDataBeforeHash::" + jsonStr);
-            Console.debug("createTransactionRefundRequest::hash::" + hashRSA);
+            logger.debug("[TransactionRefundRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return TransactionRefundRequest
                     .refundBuilder()
@@ -91,7 +77,7 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
                     .version(version)
                     .build();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[TransactionRefundRequest] ", e);
         }
 
         return null;

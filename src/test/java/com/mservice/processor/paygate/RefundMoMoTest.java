@@ -4,13 +4,16 @@ import com.mservice.paygate.models.RefundMoMoRequest;
 import com.mservice.paygate.models.RefundMoMoResponse;
 import com.mservice.paygate.processor.allinone.RefundMoMo;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.PartnerInfo;
 import org.junit.jupiter.api.Test;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNull;
 
 class RefundMoMoTest {
-    Environment env = Environment.selectEnv("dev");
+    PartnerInfo devInfo = new PartnerInfo("MOMOLRJZ20181206", "mTCKt9W3eU1m39TW", "KqBEecvaJf1nULnhPF5htpG3AMtDIOlD");
+    Environment env = new Environment("https://test-payment.momo.vn/gw_payment/transactionProcessor", devInfo, "development");
+
     RefundMoMo refundMoMo = new RefundMoMo(env);
 
     String exceptionMessage;

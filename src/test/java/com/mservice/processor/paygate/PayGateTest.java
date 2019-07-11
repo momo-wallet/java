@@ -10,6 +10,7 @@ import com.mservice.paygate.processor.allinone.PayATM;
 import com.mservice.paygate.processor.allinone.QueryStatusTransaction;
 import com.mservice.paygate.processor.allinone.RefundStatus;
 import com.mservice.shared.sharedmodels.Environment;
+import com.mservice.shared.sharedmodels.PartnerInfo;
 import com.mservice.shared.utils.Encoder;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -19,7 +20,9 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class PayGateTest {
-    Environment environment = Environment.selectEnv("dev");
+    PartnerInfo devInfo = new PartnerInfo("MOMOLRJZ20181206", "mTCKt9W3eU1m39TW", "KqBEecvaJf1nULnhPF5htpG3AMtDIOlD");
+    Environment environment = new Environment("https://test-payment.momo.vn/gw_payment/transactionProcessor", devInfo, "development");
+
     long amount = 30000;
     String requestId = "1560760777994";
     String publicKey = "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAkpa+qMXS6O11x7jBGo9W3yxeHEsAdyDE" +

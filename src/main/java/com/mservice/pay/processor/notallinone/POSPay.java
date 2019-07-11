@@ -1,67 +1,56 @@
 package com.mservice.pay.processor.notallinone;
 
 import com.google.gson.Gson;
-import com.mservice.pay.models.MoMoJson;
-import com.mservice.pay.models.POSProcessRequest;
-import com.mservice.pay.models.POSProcessResponse;
+import com.mservice.pay.models.POSPayRequest;
+import com.mservice.pay.models.POSPayResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.Execute;
-import com.mservice.shared.utils.Console;
+import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-public class POSPay extends AbstractProcess<POSProcessRequest, POSProcessResponse> {
+public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
     public POSPay(Environment environment) {
         super(environment);
     }
 
-    public static POSProcessResponse process(Environment env, String partnerRefId, long amount, String storeId, String storeName,
-                                             String publicKey, String description, String paymentCode, double version, int payType) throws Exception {
-        Console.log("========================== START POS PAYMENT PROCESS ==================");
-
+    public static POSPayResponse process(Environment env, String partnerRefId, long amount, String storeId, String storeName, String publicKey, String description, String paymentCode, double version, int payType) throws Exception {
         POSPay posPay = new POSPay(env);
-        POSProcessRequest posPayProcessingRequest = posPay.createPOSPayProcessingRequest(partnerRefId, amount, storeId, storeName, publicKey,
-                paymentCode, description, version, payType);
-
-        POSProcessResponse posProcessResponse = posPay.execute(posPayProcessingRequest);
-
-        Console.log("========================== END POS PAYMENT PROCESS ==================");
-        return posProcessResponse;
-    }
-
-    public POSProcessResponse execute(POSProcessRequest request) throws MoMoException {
         try {
-            String payload = getGson().toJson(request, POSProcessRequest.class);
-
-            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_POS_URI, payload);
-
-            POSProcessResponse posProcessResponse = getGson().fromJson(response.getData(), POSProcessResponse.class);
-
-            if (posProcessResponse.getStatus() != 0) {
-                Console.error("getPOSPayProcessingRequest::status::", posProcessResponse.getStatus() + "");
-                Console.error("getPOSPayProcessingRequest::message::", posProcessResponse.getMessage().getDescription());
-            } else {
-                MoMoJson message = posProcessResponse.getMessage();
-                Console.debug("getPOSPayProcessingRequest::transid::" + message.getTransid());
-                Console.debug("getPOSPayProcessingRequest::amount::" + message.getAmount());
-                Console.debug("getPOSPayProcessingRequest::phoneNumber::", message.getPhoneNumber());
-            }
-            return posProcessResponse;
-        } catch (Exception e) {
-            e.printStackTrace();
+            POSPayRequest posPayProcessingRequest = posPay.createPOSPayProcessingRequest(partnerRefId, amount, storeId, storeName, publicKey, paymentCode, description, version, payType);
+            POSPayResponse posPayResponse = posPay.execute(posPayProcessingRequest);
+            return posPayResponse;
+        } catch (Exception exception) {
+            posPay.logger.error("[POSPayProcess] ", exception);
         }
         return null;
     }
 
-    public POSProcessRequest createPOSPayProcessingRequest(String partnerRefId, long amount, String storeId, String storeName, String publicKey,
-                                                           String paymentCode, String description, double version, int payType) {
+    public POSPayResponse execute(POSPayRequest request) throws MoMoException {
+        try {
+            String payload = getGson().toJson(request, POSPayRequest.class);
+
+            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), payload);
+            if (response.getStatus() != 200) {
+                throw new MoMoException("[POSPayResponse] [" + request.getPartnerRefId() + "] -> Error API");
+            }
+
+            POSPayResponse posPayResponse = getGson().fromJson(response.getData(), POSPayResponse.class);
+
+            return posPayResponse;
+        } catch (Exception e) {
+            logger.error("[POSPayResponse] ", e);
+        }
+        return null;
+    }
+
+    public POSPayRequest createPOSPayProcessingRequest(String partnerRefId, long amount, String storeId, String storeName, String publicKey,
+                                                       String paymentCode, String description, double version, int payType) {
 
         try {
 
@@ -78,10 +67,9 @@ public class POSPay extends AbstractProcess<POSProcessRequest, POSProcessRespons
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            Console.debug("createPOSPayProcessingRequest::rawDataBeforeHash::" + jsonStr);
-            Console.debug("createPOSPayProcessingRequest::hash::" + hashRSA);
+            logger.debug("[POSPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
-            return POSProcessRequest
+            return POSPayRequest
                     .builder()
                     .partnerCode(partnerInfo.getPartnerCode())
                     .partnerRefId(partnerRefId)
@@ -91,7 +79,7 @@ public class POSPay extends AbstractProcess<POSProcessRequest, POSProcessRespons
                     .payType(payType)
                     .build();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[POSPayRequest] ", e);
         }
 
         return null;

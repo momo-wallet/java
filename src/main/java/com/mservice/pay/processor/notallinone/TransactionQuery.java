@@ -1,17 +1,14 @@
 package com.mservice.pay.processor.notallinone;
 
 import com.google.gson.Gson;
-import com.mservice.pay.models.MoMoJson;
 import com.mservice.pay.models.TransactionQueryRequest;
 import com.mservice.pay.models.TransactionQueryResponse;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.Execute;
-import com.mservice.shared.utils.Console;
+import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
@@ -24,17 +21,16 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
     }
 
     public static TransactionQueryResponse process(Environment env, String partnerRefId, String requestId, String publicKey, String momoTransId, double version) throws Exception {
-        Console.log("========================== START TRANSACTION QUERY STATUS ==================");
-
         TransactionQuery transactionQuery = new TransactionQuery(env);
-        TransactionQueryRequest transactionQueryRequest = transactionQuery.createTransactionQueryRequest(partnerRefId, requestId, publicKey, momoTransId, version);
-        TransactionQueryResponse transactionQueryResponse = transactionQuery.execute(transactionQueryRequest);
+        try {
+            TransactionQueryRequest transactionQueryRequest = transactionQuery.createTransactionQueryRequest(partnerRefId, requestId, publicKey, momoTransId, version);
+            TransactionQueryResponse transactionQueryResponse = transactionQuery.execute(transactionQueryRequest);
+            return transactionQueryResponse;
 
-        // Your handler
-
-        Console.log("========================== END TRANSACTION QUERY STATUS ==================");
-
-        return transactionQueryResponse;
+        } catch (Exception e) {
+            transactionQuery.logger.error("[TransactionQueryProcess] ", e);
+        }
+        return null;
     }
 
     @Override
@@ -42,24 +38,16 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
         try {
             String payload = getGson().toJson(request, TransactionQueryRequest.class);
 
-            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_STATUS_URI, payload);
+            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), payload);
+            if (response.getStatus() != 200) {
+                throw new MoMoException("[TransactionQueryResponse] [" + request.getPartnerRefId() + "] -> Error API");
+            }
 
             TransactionQueryResponse transactionQueryResponse = getGson().fromJson(response.getData(), TransactionQueryResponse.class);
 
-            if (transactionQueryResponse.getStatus() != 0) {
-                Console.error("getTransactionQueryRequest::errorCode::", transactionQueryResponse.getStatus() + "");
-                Console.error("getTransactionQueryRequest::errorMessage::", transactionQueryResponse.getMessage());
-
-            } else {
-                MoMoJson data = transactionQueryResponse.getData();
-
-                Console.debug("getTransactionQueryRequest::billId::", data.getBillId());
-                Console.debug("getTransactionQueryRequest::amount::" + data.getAmount());
-                Console.debug("getTransactionQueryRequest::Phone Number::", data.getPhoneNumber());
-            }
             return transactionQueryResponse;
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[TransactionQueryResponse] ", e);
         }
         return null;
     }
@@ -79,8 +67,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            Console.debug("createTransactionQueryRequest::rawDataBeforeHash::" + jsonStr);
-            Console.debug("createTransactionQueryRequest::hash::" + hashRSA);
+            logger.debug("[TransactionQueryRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return TransactionQueryRequest
                     .builder()
@@ -91,7 +78,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
                     .momoTransId(momoTransId)
                     .build();
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[TransactionQueryRequest] ", e);
         }
 
         return null;

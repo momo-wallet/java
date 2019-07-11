@@ -7,10 +7,8 @@ import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.Execute;
-import com.mservice.shared.utils.Console;
+import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
 public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMResponse> {
 
@@ -18,31 +16,31 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
         super(environment);
     }
 
-    public static RefundATMResponse process(Environment env, String orderId, String requestId, String amount, String transId, String bankCode)
-            throws Exception {
-        Console.log("========================== START ATM REFUND PROCESS  ==================");
+    public static RefundATMResponse process(Environment env, String orderId, String requestId, String amount, String transId, String bankCode) throws Exception {
         RefundATM refundATM = new RefundATM(env);
-        RefundATMRequest request = refundATM.createRefundATMRequest(requestId, orderId, amount, transId, bankCode);
-        RefundATMResponse response = refundATM.execute(request);
-
-        Console.log("========================== END ATM REFUND PROCESS ==================");
-
-        return response;
+        try {
+            RefundATMRequest request = refundATM.createRefundATMRequest(requestId, orderId, amount, transId, bankCode);
+            RefundATMResponse response = refundATM.execute(request);
+            return response;
+        } catch (Exception exception) {
+            refundATM.logger.error("[RefundATMProcess] ", exception);
+        }
+        return null;
     }
 
     public RefundATMResponse execute(RefundATMRequest request) throws MoMoException {
         try {
             String payload = getGson().toJson(request, RefundATMRequest.class);
 
-            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), payload);
 
             if (response.getStatus() != 200) {
-                throw new MoMoException("Error API");
+                throw new MoMoException("[RefundATMResponse] [" + request.getOrderId() + "] -> Error API");
             }
 
             RefundATMResponse refundATMResponse = getGson().fromJson(response.getData(), RefundATMResponse.class);
 
-            errorMoMoProcess(refundATMResponse.getErrorCode());
+//            errorMoMoProcess(refundATMResponse.getErrorCode());
 
             String rawData = Parameter.PARTNER_CODE + "=" + refundATMResponse.getPartnerCode() +
                     "&" + Parameter.ACCESS_KEY + "=" + refundATMResponse.getAccessKey() +
@@ -54,15 +52,8 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                     "&" + Parameter.LOCAL_MESSAGE + "=" + refundATMResponse.getLocalMessage() +
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
 
-            Console.debug("getrefundATMResponse::rawDataBeforeHash::" + rawData);
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            Console.debug("getrefundATMResponse::signature::" + signature);
-
-            if (refundATMResponse.getErrorCode() != 0) {
-                Console.error("errorCode::", refundATMResponse.getErrorCode() + "");
-                Console.error("errorMessage::", refundATMResponse.getMessage());
-                Console.error("localMessage::", refundATMResponse.getLocalMessage());
-            }
+            logger.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
 
             if (signature.equals(refundATMResponse.getSignature())) {
                 return refundATMResponse;
@@ -70,30 +61,30 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                 throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
 
-        } catch (Exception e) {
-            e.printStackTrace();
+        } catch (Exception exception) {
+            logger.error("[RefundATMResponse] ", exception);
         }
         return null;
     }
 
     public RefundATMRequest createRefundATMRequest(String requestId, String orderId, String amount, String transId, String bankCode) {
-        String rawData =
-                Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
-                        "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
-                        "&" + Parameter.REQUEST_ID + "=" + requestId +
-                        "&" + Parameter.BANK_CODE + "=" + bankCode +
-                        "&" + Parameter.AMOUNT + "=" + amount +
-                        "&" + Parameter.ORDER_ID + "=" + orderId +
-                        "&" + Parameter.TRANS_ID + "=" + transId +
-                        "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
         String signature = "";
 
         try {
-            Console.debug("createRefundATMRequest::rawDataBeforeHash::" + rawData);
+            String rawData =
+                    Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
+                            "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
+                            "&" + Parameter.REQUEST_ID + "=" + requestId +
+                            "&" + Parameter.BANK_CODE + "=" + bankCode +
+                            "&" + Parameter.AMOUNT + "=" + amount +
+                            "&" + Parameter.ORDER_ID + "=" + orderId +
+                            "&" + Parameter.TRANS_ID + "=" + transId +
+                            "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            Console.debug("createRefundATMRequest::signature::" + signature);
+
+            logger.debug("[RefundATMRequest] rawData: " + rawData + ", [Signature] -> " + signature);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[RefundATMRequest] ", e);
         }
 
         RefundATMRequest request = RefundATMRequest

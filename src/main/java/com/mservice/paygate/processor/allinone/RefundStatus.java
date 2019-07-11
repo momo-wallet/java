@@ -10,10 +10,8 @@ import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.Execute;
-import com.mservice.shared.utils.Console;
+import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -29,41 +27,41 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
     }
 
     public static List<RefundStatusResponse> process(Environment env, String requestId, String orderId) throws Exception {
-        Console.log("========================== START MOMO REFUND STATUS ==================");
-
         RefundStatus refundStatus = new RefundStatus(env);
-        RefundStatusRequest request = refundStatus.createRefundStatusRequest(requestId, orderId);
-        List<RefundStatusResponse> response = refundStatus.execute(request);
 
-        Console.log("========================== END MOMO REFUND STATUS ==================");
-
-        return response;
+        try {
+            RefundStatusRequest request = refundStatus.createRefundStatusRequest(requestId, orderId);
+            List<RefundStatusResponse> response = refundStatus.execute(request);
+            return response;
+        } catch (Exception exception) {
+            refundStatus.logger.error("[RefundStatusProcess] " + exception);
+        }
+        return new ArrayList<>();
     }
 
     @Override
-    public List<RefundStatusResponse> execute(RefundStatusRequest RefundStatusRequest) throws MoMoException {
+    public List<RefundStatusResponse> execute(RefundStatusRequest refundStatusRequest) throws MoMoException {
 
         List<RefundStatusResponse> responseList = new ArrayList<RefundStatusResponse>();
 
         try {
-            String payload = getGson().toJson(RefundStatusRequest, RefundStatusRequest.class);
-            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            String payload = getGson().toJson(refundStatusRequest, RefundStatusRequest.class);
+            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), payload);
 
             if (response.getStatus() != 200) {
-                throw new MoMoException("Error API");
+                throw new MoMoException("[RefundStatusResponse] [" + refundStatusRequest.getOrderId() + "] -> Error API");
             }
 
             JsonParser jsonParser = new JsonParser();
             JsonArray jsonArray = (JsonArray) jsonParser.parse(response.getData());
 
-            Console.debug("===========================");
             for (int i = 0; i < jsonArray.size(); i++) {
                 JsonElement jsonElement = jsonArray.get(i);
                 JsonElement obj = jsonElement.getAsJsonObject();
 
                 RefundStatusResponse refundMoMoResponse = getGson().fromJson(obj, RefundStatusResponse.class);
 
-                errorMoMoProcess(refundMoMoResponse.getErrorCode());
+                //errorMoMoProcess(refundMoMoResponse.getErrorCode());
 
                 String rawData = Parameter.PARTNER_CODE + "=" + refundMoMoResponse.getPartnerCode() +
                         "&" + Parameter.ACCESS_KEY + "=" + refundMoMoResponse.getAccessKey() +
@@ -76,17 +74,8 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                         "&" + Parameter.LOCAL_MESSAGE + "=" + refundMoMoResponse.getLocalMessage() +
                         "&" + Parameter.REQUEST_TYPE + "=" + RequestType.QUERY_REFUND;
 
-                Console.debug("getrefundStatusResponse::transId::" + refundMoMoResponse.getTransId());
-                Console.debug("getrefundStatusResponse::rawDataBeforeHash::" + rawData);
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                Console.debug("getrefundStatusResponse::signature::" + signature);
-                Console.debug("===========================");
-
-                if (refundMoMoResponse.getErrorCode() != 0) {
-                    Console.error("errorCode::", refundMoMoResponse.getErrorCode() + "");
-                    Console.error("errorMessage::", refundMoMoResponse.getMessage());
-                    Console.error("localMessage::", refundMoMoResponse.getLocalMessage());
-                }
+                logger.info("[RefundStatusTransaction] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundMoMoResponse.getSignature());
 
                 if (signature.equals(refundMoMoResponse.getSignature())) {
                     responseList.add(refundMoMoResponse);
@@ -95,27 +84,26 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                 }
             }
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[RefundStatusResponse] " + e);
         }
 
         return responseList;
     }
 
     public RefundStatusRequest createRefundStatusRequest(String requestId, String orderId) {
-        String rawData =
-                Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
-                        "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
-                        "&" + Parameter.REQUEST_ID + "=" + requestId +
-                        "&" + Parameter.ORDER_ID + "=" + orderId +
-                        "&" + Parameter.REQUEST_TYPE + "=" + RequestType.QUERY_REFUND;
         String signature = "";
 
         try {
-            Console.debug("createQueryStatusRefundStatusRequest::rawDataBeforeHash::" + rawData);
+            String rawData =
+                    Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
+                            "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
+                            "&" + Parameter.REQUEST_ID + "=" + requestId +
+                            "&" + Parameter.ORDER_ID + "=" + orderId +
+                            "&" + Parameter.REQUEST_TYPE + "=" + RequestType.QUERY_REFUND;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            Console.debug("createQueryStatusRefundStatusRequest::signature::" + signature);
+            logger.debug("[RefundStatusRequest] rawData: " + rawData + ", [Signature] -> " + signature);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[RefundStatusRequest] " + e);
         }
 
         RefundStatusRequest refundStatusRequest = RefundStatusRequest

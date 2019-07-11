@@ -7,10 +7,8 @@ import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
-import com.mservice.shared.sharedmodels.Execute;
-import com.mservice.shared.utils.Console;
+import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import com.mservice.shared.utils.HttpResponse;
 
 /**
  * @author hainguyen
@@ -29,23 +27,14 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
      * @param requestId request ID
      **/
     public static QueryStatusTransactionResponse process(Environment env, String orderId, String requestId) throws Exception {
-        Console.log("========================== START QUERY QUERY STATUS ==================");
+        QueryStatusTransaction queryStatusTransaction = new QueryStatusTransaction(env);
         try {
-            QueryStatusTransaction queryStatusTransaction = new QueryStatusTransaction(env);
             QueryStatusTransactionRequest queryStatusRequest = queryStatusTransaction.createQueryRequest(orderId, requestId);
             QueryStatusTransactionResponse queryStatusResponse = queryStatusTransaction.execute(queryStatusRequest);
 
-            // Your handler
-            if (queryStatusResponse.getErrorCode() == 0) {
-                Console.debug("payType::", queryStatusResponse.getPayType());
-                Console.debug("transId::", queryStatusResponse.getTransId());
-                Console.debug("orderId::", queryStatusResponse.getOrderId());
-            }
-            Console.log("========================== END QUERY QUERY STATUS ==================");
-
             return queryStatusResponse;
         } catch (Exception e) {
-            e.printStackTrace();
+            queryStatusTransaction.logger.error("[QueryStatusProcess] ", e);
         }
         return null;
     }
@@ -56,15 +45,15 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
         try {
             String payload = getGson().toJson(request, QueryStatusTransactionRequest.class);
 
-            HttpResponse response = Execute.sendToMoMo(environment.getMomoEndpoint(), Parameter.PAY_GATE_URI, payload);
+            HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint(), payload);
 
             if (response.getStatus() != 200) {
-                throw new MoMoException("Error API");
+                throw new MoMoException("[QueryStatusTransactionResponse] [" + request.getOrderId() + "] -> Error API");
             }
 
             QueryStatusTransactionResponse queryStatusResponse = getGson().fromJson(response.getData(), QueryStatusTransactionResponse.class);
 
-            errorMoMoProcess(queryStatusResponse.getErrorCode());
+//            errorMoMoProcess(queryStatusResponse.getErrorCode());
 
             String rawData = Parameter.PARTNER_CODE + "=" + queryStatusResponse.getPartnerCode() +
                     "&" + Parameter.ACCESS_KEY + "=" + queryStatusResponse.getAccessKey() +
@@ -79,15 +68,8 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
                     "&" + Parameter.PAY_TYPE + "=" + queryStatusResponse.getPayType() +
                     "&" + Parameter.EXTRA_DATA + "=" + queryStatusResponse.getExtraData();
 
-            Console.debug("getQueryStatusResponse::rawDataBeforeHash::" + rawData);
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            Console.debug("getQueryStatusResponse::signature::" + signature);
-
-            if (queryStatusResponse.getErrorCode() != 0) {
-                Console.error("errorCode::", queryStatusResponse.getErrorCode() + "");
-                Console.error("errorMessage::", queryStatusResponse.getMessage());
-                Console.error("localMessage::", queryStatusResponse.getLocalMessage());
-            }
+            logger.info("[QueryStatusTransactionResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
 
             if (signature.equals(queryStatusResponse.getSignature())) {
                 return queryStatusResponse;
@@ -96,27 +78,26 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
             }
 
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[QueryStatusTransactionResponse] ", e);
         }
         return null;
 
     }
 
     public QueryStatusTransactionRequest createQueryRequest(String orderId, String requestId) {
-        String rawData =
-                Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
-                        "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
-                        "&" + Parameter.REQUEST_ID + "=" + requestId +
-                        "&" + Parameter.ORDER_ID + "=" + orderId +
-                        "&" + Parameter.REQUEST_TYPE + "=" + RequestType.TRANSACTION_STATUS;
         String signature = "";
-
         try {
-            Console.debug("createQueryStatusRequest::rawDataBeforeHash::" + rawData);
+            String rawData =
+                    Parameter.PARTNER_CODE + "=" + partnerInfo.getPartnerCode() +
+                            "&" + Parameter.ACCESS_KEY + "=" + partnerInfo.getAccessKey() +
+                            "&" + Parameter.REQUEST_ID + "=" + requestId +
+                            "&" + Parameter.ORDER_ID + "=" + orderId +
+                            "&" + Parameter.REQUEST_TYPE + "=" + RequestType.TRANSACTION_STATUS;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            Console.debug("createQueryStatusRequest::signature::" + signature);
+            logger.debug("[QueryStatusTransactionRequest] rawData: " + rawData + ", [Signature] -> " + signature);
+
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.error("[QueryStatusTransactionRequest] ", e);
         }
 
         QueryStatusTransactionRequest request = QueryStatusTransactionRequest

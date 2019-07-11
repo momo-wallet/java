@@ -2,12 +2,12 @@ package com.mservice.pay.models;
 
 import lombok.Builder;
 
-public class AppProcessResponse extends PayResponse {
+public class AppPayResponse extends PayResponse {
     private String transid;
     private Long amount;
 
     @Builder
-    public AppProcessResponse(Integer status, String message, String signature, String transId, Long amount) {
+    public AppPayResponse(Integer status, String message, String signature, String transId, Long amount) {
         super(status, message, signature);
         this.transid = transId;
         this.amount = amount;

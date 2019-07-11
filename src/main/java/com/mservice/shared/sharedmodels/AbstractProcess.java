@@ -3,6 +3,8 @@ package com.mservice.shared.sharedmodels;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mservice.shared.exception.MoMoException;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 /**
  * @author hainguyen
@@ -12,12 +14,14 @@ public abstract class AbstractProcess<T, V> {
 
     protected PartnerInfo partnerInfo;
     protected Environment environment;
+    protected final Logger logger;
 
     protected Execute execute = new Execute();
 
     public AbstractProcess(Environment environment) {
         this.environment = environment;
         this.partnerInfo = environment.getPartnerInfo();
+        this.logger = LogManager.getLogger(getClass());
     }
 
     public static Gson getGson() {

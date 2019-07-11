@@ -10,15 +10,6 @@ public class Parameter {
     public static final String STORE_ID = "storeId";
     public static final String STORE_NAME = "storeName";
 
-    //URI for different processes in MOMO payment system:
-    public static final String PAY_GATE_URI = "/gw_payment/transactionProcessor";
-    public static final String PAY_APP_URI = "/pay/app";
-    public static final String PAY_POS_URI = "/pay/pos";
-    public static final String PAY_CONFIRMATION_URI = "/pay/confirm";
-    public static final String PAY_STATUS_URI = "/pay/query-status";
-    public static final String PAY_REFUND_URI = "/pay/refund";
-    public static final String PAY_QR_CODE_URI = "/pay/notify";
-
     public static String PARTNER_CODE = "partnerCode";
     public static String ACCESS_KEY = "accessKey";
     public static String REQUEST_ID = "requestId";
@@ -49,5 +40,7 @@ public class Parameter {
 
     public static Double VERSION = 2.0;
     public static Integer APP_PAY_TYPE = 3;
+    public static String JSON_HEADER = "application/json; charset=utf-8";
+    public static String URLENCODED_HEADER = "application/x-www-form-urlencoded";
 
 }

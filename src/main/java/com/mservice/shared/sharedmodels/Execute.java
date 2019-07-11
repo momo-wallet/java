@@ -1,27 +1,42 @@
 package com.mservice.shared.sharedmodels;
 
+import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.exception.MoMoException;
-import com.mservice.shared.utils.*;
+import okhttp3.*;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings("restriction")
 public class Execute {
 
-    public static HttpResponse sendToMoMo(String endpoint, String uri, String payload) throws MoMoException {
-        Headers headers = new Headers();
-        headers.put("Content-Type", "application/json")
-                .put("Charset", "utf-8");
+    public static final MediaType JSON = MediaType.get(Parameter.JSON_HEADER);
+    public final Logger logger = LogManager.getLogger(getClass());
 
-        HttpRequest httpRequest = new HttpRequest("POST", payload, endpoint + uri, headers);
+    OkHttpClient client = new OkHttpClient();
 
-        Console.debug("sendToMoMoServer::Endpoint::" + httpRequest.getUrl());
-        Console.debug("sendToMoMoServer::RequestBody::" + httpRequest.getData());
-        Console.debug("sendToMoMoServer::Header::" + httpRequest.getHeaders());
+    public HttpResponse sendToMoMo(String endpoint, String payload) throws MoMoException {
 
-        HttpResponse httpResponse = HttpClient.post(httpRequest);
+        try {
 
-        Console.debug("sendToMoMoServer::ResponseStatus::" + httpResponse.getStatus());
-        Console.debug("sendToMoMoServer::ResponseData::" + httpResponse.getData());
+            RequestBody requestBody = RequestBody.create(JSON, payload); //payload
 
-        return httpResponse;
+            Request request = new Request.Builder()
+                    .url(endpoint)
+                    .post(requestBody)
+                    .build();
+
+            logger.debug("[HttpPostToMoMo] Endpoint:: " + request.url() + ", RequestBody:: " + request.body());
+
+            Response result = client.newCall(request).execute();
+            HttpResponse response = new HttpResponse(result.code(), result.body().string());
+
+            logger.info("[HttpResponseFromMoMo] HttpStatusCode:: " + response.getStatus() + ", ResponseBody:: " + response.getData());
+
+            return response;
+        } catch (Exception e) {
+            logger.error("[RefundMoMoProcess] ", e);
+        }
+
+        return null;
     }
+
 }
