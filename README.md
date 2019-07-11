@@ -1,6 +1,5 @@
 # MoMo Payment Java
 
-Test project: https://github.com/lnguyen99/test-java-payment
 
 # MoMo - Payment Platform
 
@@ -32,6 +31,9 @@ Remember to specify your repository as following:
 ```
 
 ## Usage 
+
+### Test project:
+To understand and visualize how to use the library better, please consult our [test project](https://github.com/lnguyen99/test-momopayment)
 
 ### Setting Up MoMo Environment 
 MoMo provides 2 environments for integration: development(```dev```) and production(```prod```). 
