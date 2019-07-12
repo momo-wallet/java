@@ -3,4 +3,5 @@ target
 bin
 out
 **.DS_Store
+.project
 log4j2
