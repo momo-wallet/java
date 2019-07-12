@@ -45,8 +45,8 @@ public class PayGate {
 //          Please uncomment the code to actually use the necessary All-In-One gateway payment processes
 //          Remember to change the IDs
 
-//            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
-//            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
+            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
+            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
 
 //          Refund -- Manual Testing
 //            RefundMoMoResponse response = RefundMoMo.process(environment, "1562135830002", orderId, "10000", "2304963912");
@@ -66,10 +66,10 @@ public class PayGate {
         orderId = String.valueOf(System.currentTimeMillis());
         PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
 
-        orderId = String.valueOf(System.currentTimeMillis());
-        RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
+//        orderId = String.valueOf(System.currentTimeMillis());
+//        RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
         RefundStatus.process(environment, "1562135830002", "1561972787557");
-
+//
         generateRSA(customerNumber, "247", "247", "nhatnguyen", environment.getPartnerInfo().getPartnerCode(), amount, publicKey);
 
     }

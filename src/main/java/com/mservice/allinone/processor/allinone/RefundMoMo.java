@@ -41,25 +41,23 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
             RefundMoMoResponse refundMoMoResponse = getGson().fromJson(response.getData(), RefundMoMoResponse.class);
 
 //            errorMoMoProcess(refundMoMoResponse.getErrorCode());
-            if (refundMoMoResponse.getErrorCode() == 0) {
-                String rawData = Parameter.PARTNER_CODE + "=" + refundMoMoResponse.getPartnerCode() +
-                        "&" + Parameter.ACCESS_KEY + "=" + refundMoMoResponse.getAccessKey() +
-                        "&" + Parameter.REQUEST_ID + "=" + refundMoMoResponse.getRequestId() +
-                        "&" + Parameter.ORDER_ID + "=" + refundMoMoResponse.getOrderId() +
-                        "&" + Parameter.ERROR_CODE + "=" + refundMoMoResponse.getErrorCode() +
-                        "&" + Parameter.TRANS_ID + "=" + refundMoMoResponse.getTransId() +
-                        "&" + Parameter.MESSAGE + "=" + refundMoMoResponse.getMessage() +
-                        "&" + Parameter.LOCAL_MESSAGE + "=" + refundMoMoResponse.getLocalMessage() +
-                        "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_MOMO_WALLET;
+            String rawData = Parameter.PARTNER_CODE + "=" + refundMoMoResponse.getPartnerCode() +
+                    "&" + Parameter.ACCESS_KEY + "=" + refundMoMoResponse.getAccessKey() +
+                    "&" + Parameter.REQUEST_ID + "=" + refundMoMoResponse.getRequestId() +
+                    "&" + Parameter.ORDER_ID + "=" + refundMoMoResponse.getOrderId() +
+                    "&" + Parameter.ERROR_CODE + "=" + refundMoMoResponse.getErrorCode() +
+                    "&" + Parameter.TRANS_ID + "=" + refundMoMoResponse.getTransId() +
+                    "&" + Parameter.MESSAGE + "=" + refundMoMoResponse.getMessage() +
+                    "&" + Parameter.LOCAL_MESSAGE + "=" + refundMoMoResponse.getLocalMessage() +
+                    "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_MOMO_WALLET;
 
-                String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                logger.info("[RefundMoMoResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+            String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
+            logger.info("[RefundMoMoResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
 
-                if (signature.equals(refundMoMoResponse.getSignature())) {
-                    return refundMoMoResponse;
-                } else {
-                    throw new MoMoException("Wrong signature from MoMo side - please contact with us");
-                }
+            if (signature.equals(refundMoMoResponse.getSignature())) {
+                return refundMoMoResponse;
+            } else {
+                throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
         } catch (Exception e) {
             logger.error("[RefundMoMoProcess] ", e);

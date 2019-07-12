@@ -1,8 +1,7 @@
 # MoMo Payment Java
 
-Test project: https://github.com/lnguyen99/test-java-payment
 
-# MoMo - Payment Platform
+### MoMo - Payment Platform
 
 Example code to integrate MoMo E-Wallet as payment method
 - Online Payment: Desktop, Mobile website
@@ -33,13 +32,15 @@ Remember to specify your repository as following:
 
 ## Usage 
 
+### Test project:
+To understand and visualize how to use the library better, please consult our [test project](https://github.com/lnguyen99/test-momopayment)
+
 ### Setting Up MoMo Environment 
 MoMo provides 2 environments for integration: development(```dev```) and production(```prod```). 
 The model for environment is located at ```com.mservice.shared.sharedmodels.Environment```. You can use the function `selectEnv(String target, String process)` to choose the appropriate environment setup for the processes you are calling. 
  
-Example configuration is provided in ```environment.properties``` in `resources` folder. By default, log4j2 is used with Console and RollingFile Appenders. 
-
-We recommend creating your own configurations files for environment and logger setup in your own resources folder. 
+Example configuration is provided in ```environment.properties``` in `resources` folder. By default, slf4j2 is used with Console and RollingFile Appenders. 
+Please create your own configurations files for environment and log setup.  
 
 ### Integration 
 The library provides functions to conduct transactions through the All-In-One (AIO) Payment Gateway (```com.mservice.allinone```) and all other Payment (```com.mservice.pay```) options (App-In-App, POS, Dynamic QR Code)

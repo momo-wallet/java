@@ -42,26 +42,25 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
 
 //            errorMoMoProcess(refundATMResponse.getErrorCode());
 
-            if (refundATMResponse.getErrorCode() == 0) {
-                String rawData = Parameter.PARTNER_CODE + "=" + refundATMResponse.getPartnerCode() +
-                        "&" + Parameter.ACCESS_KEY + "=" + refundATMResponse.getAccessKey() +
-                        "&" + Parameter.REQUEST_ID + "=" + refundATMResponse.getRequestId() +
-                        "&" + Parameter.ORDER_ID + "=" + refundATMResponse.getOrderId() +
-                        "&" + Parameter.ERROR_CODE + "=" + refundATMResponse.getErrorCode() +
-                        "&" + Parameter.TRANS_ID + "=" + refundATMResponse.getTransId() +
-                        "&" + Parameter.MESSAGE + "=" + refundATMResponse.getMessage() +
-                        "&" + Parameter.LOCAL_MESSAGE + "=" + refundATMResponse.getLocalMessage() +
-                        "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
+            String rawData = Parameter.PARTNER_CODE + "=" + refundATMResponse.getPartnerCode() +
+                    "&" + Parameter.ACCESS_KEY + "=" + refundATMResponse.getAccessKey() +
+                    "&" + Parameter.REQUEST_ID + "=" + refundATMResponse.getRequestId() +
+                    "&" + Parameter.ORDER_ID + "=" + refundATMResponse.getOrderId() +
+                    "&" + Parameter.ERROR_CODE + "=" + refundATMResponse.getErrorCode() +
+                    "&" + Parameter.TRANS_ID + "=" + refundATMResponse.getTransId() +
+                    "&" + Parameter.MESSAGE + "=" + refundATMResponse.getMessage() +
+                    "&" + Parameter.LOCAL_MESSAGE + "=" + refundATMResponse.getLocalMessage() +
+                    "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
 
-                String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                logger.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+            String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
+            logger.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
 
-                if (signature.equals(refundATMResponse.getSignature())) {
-                    return refundATMResponse;
-                } else {
-                    throw new MoMoException("Wrong signature from MoMo side - please contact with us");
-                }
+            if (signature.equals(refundATMResponse.getSignature())) {
+                return refundATMResponse;
+            } else {
+                throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
+
 
         } catch (Exception exception) {
             logger.error("[RefundATMResponse] ", exception);
