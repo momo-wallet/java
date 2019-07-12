@@ -39,7 +39,7 @@ The model for environment is located at ```com.mservice.shared.sharedmodels.Envi
  
 Example configuration is provided in ```environment.properties``` in `resources` folder. By default, log4j2 is used with Console and RollingFile Appenders. 
 
-We recommend creating your own configurations files for environment and logger setup in your own resources folder to better manipulate the library. 
+We recommend creating your own configurations files for environment and logger setup in your own resources folder. 
 
 ### Integration 
 The library provides functions to conduct transactions through the All-In-One (AIO) Payment Gateway (```com.mservice.allinone```) and all other Payment (```com.mservice.pay```) options (App-In-App, POS, Dynamic QR Code)

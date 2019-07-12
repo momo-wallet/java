@@ -2,3 +2,5 @@ target
 .idea
 bin
 out
+**.DS_Store
+log4j2

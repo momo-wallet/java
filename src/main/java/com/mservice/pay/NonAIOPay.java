@@ -1,11 +1,7 @@
 package com.mservice.pay;
 
-import com.mservice.pay.models.POSPayResponse;
-import com.mservice.pay.models.TransactionQueryResponse;
-import com.mservice.pay.models.TransactionRefundResponse;
-import com.mservice.pay.processor.notallinone.POSPay;
-import com.mservice.pay.processor.notallinone.TransactionQuery;
-import com.mservice.pay.processor.notallinone.TransactionRefund;
+import com.mservice.pay.models.*;
+import com.mservice.pay.processor.notallinone.*;
 import com.mservice.shared.constants.Parameter;
 import com.mservice.shared.constants.ProcessType;
 import com.mservice.shared.constants.RequestType;
@@ -37,17 +33,17 @@ public class NonAIOPay {
         String publicKey = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAlsL+G4UyFO0UQsQ4cAXuGYcn38d67PluKmeJqS2RcAqnNUFJjQieI5DSCyHVgAmPpUfDZ3CiSw+5NCfnjgChd/p4fq3bnGqSIw2JP78UROQDJYqfAc+WLvT29IgCH4O+P9+lOLUj2EWf8aqHxBwC1YPxtxK+8M+LKdVMAvZd3lXE3MBg9wTDYEcCNODXkNma/SfIKJCvmVWdKeKXd6IwW7yA0oTjdguAeqP8+O8jLjxJH57otRh63iX945vqAX2YAm9qzVoiDcWpv+UubRmbZ9l0moQwkdsDyCtCYPUtcW6kkdxuhlq8rg8RAVcinsz/843CBYHtqaUaAFQU1TO5EXiXT87zx/Oj2Bf4OC+iAJL/UQ4ASeL1vMoOfDSpSE8EnqKPyP+rM/H7oUaJrIin8KkrxmDLGQWKhNcTFO6UNPv3Hh13tEBv0GRy2vktL8+CWhrYHouXF2XwpS8uR/gH/Vl+5HT/HsTv/13gjSoGBQcdfyck9ZyHh5oBrQTds52C2vabCqWCEafRMbpj7lSrDWS2Df+XznR/hGkgewSdSZ/M0VK/DLadJ3x1Yhblv1HVw3jA3xzY1/zlNOZReLuvW6/kdRwJV/Zj5bd9eLJnz9jDPUcB0hAO+JuJYfTVuhZG9Beo1JbQ9+cFx+92ELn/yHDMod6rfrfBjikU9Gkxor0CAwEAAQ==";
 
         // Uncomment to use the processes you need
-        //Make sure you are using the correct environment for each processes
-//        AppPayResponse appProcessResponse = AppPay.process(Environment.selectEnv("dev", ProcessType.APP_IN_APP), partnerRefId, partnerTransId, amount, partnerName,
-//                storeId, storeName, publicKey, customerNumber, appData, description, Parameter.VERSION, Parameter.APP_PAY_TYPE);
+        // Make sure you are using the correct environment for each processes
+        // Change to valid IDs and information to use AppPay, POS, Refund processes.
+        AppPayResponse appProcessResponse = AppPay.process(Environment.selectEnv("dev", ProcessType.APP_IN_APP), partnerRefId, partnerTransId, amount, partnerName,
+                storeId, storeName, publicKey, customerNumber, appData, description, Parameter.VERSION, Parameter.APP_PAY_TYPE);
         POSPayResponse posProcessResponse = POSPay.process(Environment.selectEnv("dev", ProcessType.PAY_POS), partnerRefId, amount, "", "", publicKey, "", "MM943358184685515708", Parameter.VERSION, Parameter.APP_PAY_TYPE);
 
-//        PayConfirmationResponse payConfirmationResponse = PayConfirmation.process(Environment.selectEnv("dev", ProcessType.PAY_CONFIRM), "1562299067267", rollback, requestId, "2305062978", "", "");
+        PayConfirmationResponse payConfirmationResponse = PayConfirmation.process(Environment.selectEnv("dev", ProcessType.PAY_CONFIRM), "1562299067267", rollback, requestId, "2305062978", "", "");
 
         TransactionQueryResponse transactionQueryResponse = TransactionQuery.process(Environment.selectEnv(ProcessType.DEV_ENV, ProcessType.PAY_QUERY_STATUS), "1562298553079", "1562299067267", publicKey, "", Parameter.VERSION);
         TransactionQuery.process(Environment.selectEnv(ProcessType.DEV_ENV, ProcessType.PAY_QUERY_STATUS), "1562299067267", "1562299177871", publicKey, "", Parameter.VERSION);
 
         TransactionRefundResponse transactionRefundResponse = TransactionRefund.process(Environment.selectEnv("dev", ProcessType.PAY_QUERY_STATUS), "1562298553079", "", publicKey, "2305062760", amount, "", "1562299067267", Parameter.VERSION);
-        TransactionRefund.process(Environment.selectEnv(ProcessType.DEV_ENV, ProcessType.PAY_QUERY_STATUS), "1562299067267", "", publicKey, "2305062978", amount, "", "1562299177871", Parameter.VERSION);
     }
 }

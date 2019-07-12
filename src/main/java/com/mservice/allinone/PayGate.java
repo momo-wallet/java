@@ -1,11 +1,13 @@
 package com.mservice.allinone;
 
 import com.google.gson.Gson;
+import com.mservice.allinone.models.CaptureMoMoResponse;
 import com.mservice.allinone.models.PayATMResponse;
-import com.mservice.allinone.processor.allinone.PayATM;
-import com.mservice.allinone.processor.allinone.RefundATM;
-import com.mservice.allinone.processor.allinone.RefundStatus;
+import com.mservice.allinone.models.QueryStatusTransactionResponse;
+import com.mservice.allinone.models.RefundMoMoResponse;
+import com.mservice.allinone.processor.allinone.*;
 import com.mservice.shared.constants.Parameter;
+import com.mservice.shared.constants.ProcessType;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.utils.Encoder;
 
@@ -38,7 +40,7 @@ public class PayGate {
         String bankCode = "SML";
         String customerNumber = "0963181714";
 
-        Environment environment = Environment.selectEnv("dev", "paygate");
+        Environment environment = Environment.selectEnv("dev", ProcessType.PAY_GATE);
 
 //          Please uncomment the code to actually use the necessary All-In-One gateway payment processes
 //          Remember to change the IDs
@@ -64,6 +66,7 @@ public class PayGate {
         orderId = String.valueOf(System.currentTimeMillis());
         PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
 
+        orderId = String.valueOf(System.currentTimeMillis());
         RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
         RefundStatus.process(environment, "1562135830002", "1561972787557");
 

@@ -30,6 +30,7 @@ public class Encoder {
 
     private static final String HMAC_SHA256 = "HmacSHA256";
 
+
     @SuppressWarnings("resource")
     private static String toHexString(byte[] bytes) {
         StringBuilder sb = new StringBuilder(bytes.length * 2);

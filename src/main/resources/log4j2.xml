@@ -3,26 +3,20 @@
     <Appenders>
         <!-- Console Appender -->
         <Console name="LogToConsole" target="SYSTEM_OUT">
-            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green} (%F:%L) : %msg%n"/> 
+            <PatternLayout pattern="%d{HH:mm:ss.SSS} [%t] %highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green} (%F) : %msg%n"/>
         </Console>
+        <!-- RollingFile Appender -->
         <RollingFile name="LogToFile"
-                     fileName="target/log4j2/roll-by-time-and-size/app.log"
-                     filePattern="target/log4j2/roll-by-time-and-size/app.%d{MM-dd-yyyy-HH-mm}.%i.log.gz"
+                     fileName="log4j2/roll_by_time/app.log"
+                     filePattern="log4j2/roll_by_time/app.%d{MM-dd-yyyy-HH-mm}.%i.log.gz"
                      ignoreExceptions="false">
-                <PatternLayout>
-                    <Pattern>[%-5level] %d{yyyy-MM-dd HH:mm:ss.SSS} [%t] %c{1} - %msg%n</Pattern>
-                </PatternLayout>
-                <Policies>
-                    <OnStartupTriggeringPolicy />
-                    <SizeBasedTriggeringPolicy size="5 KB" />
-                    <TimeBasedTriggeringPolicy />
-                </Policies>
-                <DefaultRolloverStrategy>
-                    <Delete basePath="${baseDir}" maxDepth="2">
-                        <IfFileName glob="target/log4j2/roll-by-time-and-size/app.*.log.gz" />
-                        <IfLastModified age="20d" />
-                    </Delete>
-                </DefaultRolloverStrategy>
+            <PatternLayout>    
+                <Pattern>%d{HH:mm:ss.SSS} [%t] %highlight{%-5level}{FATAL=bg_red, ERROR=red, WARN=yellow, INFO=green} (%F) : %msg%n</Pattern>    
+            </PatternLayout>
+            <Policies>
+                <OnStartupTriggeringPolicy/>    
+                <SizeBasedTriggeringPolicy size="200 MB"/>
+            </Policies>
         </RollingFile>
     </Appenders>
     <Loggers>
@@ -30,7 +24,6 @@
             <AppenderRef ref="LogToConsole"/>
             <AppenderRef ref="LogToFile"/>
         </Logger>
-
         <Root level="error">
             <AppenderRef ref="LogToConsole"/>
             <AppenderRef ref="LogToFile"/>

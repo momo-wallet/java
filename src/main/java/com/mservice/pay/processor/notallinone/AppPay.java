@@ -46,18 +46,20 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
 
             AppPayResponse appPayResponse = getGson().fromJson(response.getData(), AppPayResponse.class);
 
-            String rawData = Parameter.STATUS + "=" + appPayResponse.getStatus() +
-                    "&" + Parameter.MESSAGE + "=" + appPayResponse.getMessage() +
-                    "&" + Parameter.AMOUNT + "=" + appPayResponse.getAmount() +
-                    "&" + Parameter.PAY_TRANS_ID + "=" + appPayResponse.getTransId();
+            if (appPayResponse.getStatus() == 0) {
+                String rawData = Parameter.STATUS + "=" + appPayResponse.getStatus() +
+                        "&" + Parameter.MESSAGE + "=" + appPayResponse.getMessage() +
+                        "&" + Parameter.AMOUNT + "=" + appPayResponse.getAmount() +
+                        "&" + Parameter.PAY_TRANS_ID + "=" + appPayResponse.getTransId();
 
-            String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getHash());
+                String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
+                logger.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getHash());
 
-            if (signature.equals(appPayResponse.getSignature())) {
-                return appPayResponse;
-            } else {
-                throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
+                if (signature.equals(appPayResponse.getSignature())) {
+                    return appPayResponse;
+                } else {
+                    throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
+                }
             }
         } catch (Exception e) {
             logger.error("[AppPayResponse] ", e);

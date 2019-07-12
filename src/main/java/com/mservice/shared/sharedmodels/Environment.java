@@ -17,30 +17,6 @@ public class Environment {
         this.target = target;
     }
 
-    public String getMomoEndpoint() {
-        return momoEndpoint;
-    }
-
-    public void setMomoEndpoint(String momoEndpoint) {
-        this.momoEndpoint = momoEndpoint;
-    }
-
-    public PartnerInfo getPartnerInfo() {
-        return partnerInfo;
-    }
-
-    public void setPartnerInfo(PartnerInfo partnerInfo) {
-        this.partnerInfo = partnerInfo;
-    }
-
-    public String getTarget() {
-        return target;
-    }
-
-    public void setTarget(String target) {
-        this.target = target;
-    }
-
     /*
      * Create and modify your environment.properties file appropriately
      *
@@ -95,5 +71,29 @@ public class Environment {
             e.printStackTrace();
         }
         return null;
+    }
+
+    public String getMomoEndpoint() {
+        return momoEndpoint;
+    }
+
+    public void setMomoEndpoint(String momoEndpoint) {
+        this.momoEndpoint = momoEndpoint;
+    }
+
+    public PartnerInfo getPartnerInfo() {
+        return partnerInfo;
+    }
+
+    public void setPartnerInfo(PartnerInfo partnerInfo) {
+        this.partnerInfo = partnerInfo;
+    }
+
+    public String getTarget() {
+        return target;
+    }
+
+    public void setTarget(String target) {
+        this.target = target;
     }
 }
