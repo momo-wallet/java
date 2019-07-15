@@ -9,26 +9,28 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class TransactionRefund extends AbstractProcess<TransactionRefundRequest, TransactionRefundResponse> {
     public TransactionRefund(Environment environment) {
         super(environment);
     }
 
     public static TransactionRefundResponse process(Environment env, String partnerRefId, String storeId, String publicKey, String momoTransId, Long amount, String description, String requestId, double version) throws Exception {
-        TransactionRefund transactionRefund = new TransactionRefund(env);
-
         try {
+            TransactionRefund transactionRefund = new TransactionRefund(env);
+
             TransactionRefundRequest transactionRefundRequest = transactionRefund.createTransactionRefundRequest(partnerRefId, storeId, publicKey, momoTransId, amount, description, requestId, version);
             TransactionRefundResponse transactionRefundResponse = transactionRefund.execute(transactionRefundRequest);
             return transactionRefundResponse;
 
         } catch (Exception e) {
-            transactionRefund.logger.error("[TransactionRefundProcess] ", e);
+            log.error("[TransactionRefundProcess] ", e);
         }
         return null;
     }
@@ -44,12 +46,12 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
 
             TransactionRefundResponse transactionRefundResponse = getGson().fromJson(response.getData(), TransactionRefundResponse.class);
             if (transactionRefundResponse.getStatus() != 0) {
-                logger.warn("[TransactionRefundResponse] -> Status: " + transactionRefundResponse.getStatus() + ", Message: " + transactionRefundResponse.getMessage());
+                log.warn("[TransactionRefundResponse] -> Status: " + transactionRefundResponse.getStatus() + ", Message: " + transactionRefundResponse.getMessage());
             }
 
             return transactionRefundResponse;
         } catch (Exception e) {
-            logger.error("[TransactionRefundResponse] ", e);
+            log.error("[TransactionRefundResponse] ", e);
         }
         return null;
     }
@@ -70,7 +72,7 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            logger.debug("[TransactionRefundRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            log.debug("[TransactionRefundRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return TransactionRefundRequest
                     .builder()
@@ -80,7 +82,7 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
                     .version(version)
                     .build();
         } catch (Exception e) {
-            logger.error("[TransactionRefundRequest] ", e);
+            log.error("[TransactionRefundRequest] ", e);
         }
 
         return null;

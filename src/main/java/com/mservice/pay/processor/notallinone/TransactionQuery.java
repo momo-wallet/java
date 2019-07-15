@@ -9,11 +9,13 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, TransactionQueryResponse> {
 
     public TransactionQuery(Environment environment) {
@@ -21,14 +23,15 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
     }
 
     public static TransactionQueryResponse process(Environment env, String partnerRefId, String requestId, String publicKey, String momoTransId, double version) throws Exception {
-        TransactionQuery transactionQuery = new TransactionQuery(env);
         try {
+            TransactionQuery transactionQuery = new TransactionQuery(env);
+
             TransactionQueryRequest transactionQueryRequest = transactionQuery.createTransactionQueryRequest(partnerRefId, requestId, publicKey, momoTransId, version);
             TransactionQueryResponse transactionQueryResponse = transactionQuery.execute(transactionQueryRequest);
             return transactionQueryResponse;
 
         } catch (Exception e) {
-            transactionQuery.logger.error("[TransactionQueryProcess] ", e);
+            log.error("[TransactionQueryProcess] ", e);
         }
         return null;
     }
@@ -47,7 +50,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
 
             return transactionQueryResponse;
         } catch (Exception e) {
-            logger.error("[TransactionQueryResponse] ", e);
+            log.error("[TransactionQueryResponse] ", e);
         }
         return null;
     }
@@ -67,7 +70,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            logger.debug("[TransactionQueryRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            log.debug("[TransactionQueryRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return TransactionQueryRequest
                     .builder()
@@ -78,7 +81,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
                     .momoTransId(momoTransId)
                     .build();
         } catch (Exception e) {
-            logger.error("[TransactionQueryRequest] ", e);
+            log.error("[TransactionQueryRequest] ", e);
         }
 
         return null;

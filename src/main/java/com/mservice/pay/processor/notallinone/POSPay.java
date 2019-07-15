@@ -9,24 +9,27 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
     public POSPay(Environment environment) {
         super(environment);
     }
 
     public static POSPayResponse process(Environment env, String partnerRefId, long amount, String storeId, String storeName, String publicKey, String description, String paymentCode, double version, int payType) throws Exception {
-        POSPay posPay = new POSPay(env);
         try {
+            POSPay posPay = new POSPay(env);
+
             POSPayRequest posPayProcessingRequest = posPay.createPOSPayProcessingRequest(partnerRefId, amount, storeId, storeName, publicKey, paymentCode, description, version, payType);
             POSPayResponse posPayResponse = posPay.execute(posPayProcessingRequest);
             return posPayResponse;
         } catch (Exception exception) {
-            posPay.logger.error("[POSPayProcess] ", exception);
+            log.error("[POSPayProcess] ", exception);
         }
         return null;
     }
@@ -42,12 +45,12 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
 
             POSPayResponse posPayResponse = getGson().fromJson(response.getData(), POSPayResponse.class);
             if (posPayResponse.getStatus() != 0) {
-                logger.warn("[POSPayResponse] -> Status: " + posPayResponse.getStatus() + ", Message: " + posPayResponse.getMessage().getDescription());
+                log.warn("[POSPayResponse] -> Status: " + posPayResponse.getStatus() + ", Message: " + posPayResponse.getMessage().getDescription());
             }
 
             return posPayResponse;
         } catch (Exception e) {
-            logger.error("[POSPayResponse] ", e);
+            log.error("[POSPayResponse] ", e);
         }
         return null;
     }
@@ -70,7 +73,7 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            logger.debug("[POSPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            log.debug("[POSPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return POSPayRequest
                     .builder()
@@ -82,7 +85,7 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
                     .payType(payType)
                     .build();
         } catch (Exception e) {
-            logger.error("[POSPayRequest] ", e);
+            log.error("[POSPayRequest] ", e);
         }
 
         return null;

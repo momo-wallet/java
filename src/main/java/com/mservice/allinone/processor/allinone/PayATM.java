@@ -10,11 +10,13 @@ import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hainguyen
  * Documention: https://developers.momo.vn
  */
+@Slf4j
 public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
 
     public PayATM(Environment environment) {
@@ -22,15 +24,15 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
     }
 
     public static PayATMResponse process(Environment env, String requestId, String orderId, String bankCode, String amount, String orderInfo, String returnUrl, String notifyUrl, String extra) throws Exception {
-        PayATM atmProcess = new PayATM(env);
-
         try {
+            PayATM atmProcess = new PayATM(env);
+
             PayATMRequest payATMRequest = atmProcess.createPayWithATMRequest(requestId, orderId, bankCode, amount, orderInfo, returnUrl, notifyUrl, extra, env.getPartnerInfo());
             PayATMResponse payATMResponse = atmProcess.execute(payATMRequest);
             return payATMResponse;
 
         } catch (Exception e) {
-            atmProcess.logger.error("[PayATMProcess] ", e);
+            log.error("[PayATMProcess] ", e);
         }
         return null;
     }
@@ -62,7 +64,7 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
 
-            logger.info("[PayATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + payATMResponse.getSignature());
+            log.info("[PayATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + payATMResponse.getSignature());
 
             if (signature.equals(payATMResponse.getSignature()) || payATMResponse.getSignature() == null) {
                 return payATMResponse;
@@ -71,7 +73,7 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
             }
 
         } catch (Exception e) {
-            logger.error("[PayATMResponse] ", e);
+            log.error("[PayATMResponse] ", e);
         }
         return null;
     }
@@ -94,7 +96,7 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
                     + Parameter.REQUEST_TYPE + "=" + RequestType.PAY_WITH_ATM;
             String signature = Encoder.signHmacSHA256(dataCryption, partnerInfo.getSecretKey());
 
-            logger.debug("[PayATMRequest] rawData: " + dataCryption + ", [Signature] -> " + signature);
+            log.debug("[PayATMRequest] rawData: " + dataCryption + ", [Signature] -> " + signature);
 
             PayATMRequest payATMRequest = PayATMRequest
                     .builder()
@@ -113,7 +115,7 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
 
             return payATMRequest;
         } catch (Exception e) {
-            logger.error("[PayATMRequest] ", e);
+            log.error("[PayATMRequest] ", e);
             throw new IllegalArgumentException("Invalid params ATM Request");
         }
     }

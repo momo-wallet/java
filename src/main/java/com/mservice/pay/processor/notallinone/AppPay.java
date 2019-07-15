@@ -9,11 +9,13 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
+@Slf4j
 public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
 
     public AppPay(Environment environment) {
@@ -21,15 +23,14 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
     }
 
     public static AppPayResponse process(Environment env, String partnerRefId, String partnerTransId, long amount, String partnerName, String storeId, String storeName, String publicKey, String customerNumber, String appData, String description, double version, int payType) throws Exception {
-        AppPay appPay = new AppPay(env);
-
         try {
+            AppPay appPay = new AppPay(env);
             AppPayRequest appPayRequest = appPay.createAppPayProcessingRequest(partnerRefId,
                     partnerTransId, amount, partnerName, storeId, storeName, publicKey, customerNumber, appData, description, version, payType);
             AppPayResponse appPayResponse = appPay.execute(appPayRequest);
             return appPayResponse;
         } catch (Exception exception) {
-            appPay.logger.error("[AppPayProcess] ", exception);
+            log.error("[AppPayProcess] ", exception);
         }
         return null;
     }
@@ -53,7 +54,7 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
                         "&" + Parameter.PAY_TRANS_ID + "=" + appPayResponse.getTransid();
 
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                logger.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + appPayResponse.getSignature());
+                log.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + appPayResponse.getSignature());
 
                 if (signature.equals(appPayResponse.getSignature())) {
                     return appPayResponse;
@@ -61,10 +62,10 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
                     throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
                 }
             } else {
-                logger.warn("[AppPayResponse] -> Process Failed: " + appPayResponse.getError().toString());
+                log.warn("[AppPayResponse] -> Process Failed: " + appPayResponse.getError().toString());
             }
         } catch (Exception e) {
-            logger.error("[AppPayResponse] ", e);
+            log.error("[AppPayResponse] ", e);
         }
 
         return null;
@@ -90,7 +91,7 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            logger.debug("[AppPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            log.debug("[AppPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return AppPayRequest
                     .builder()
@@ -104,7 +105,7 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
                     .payType(payType)
                     .build();
         } catch (Exception e) {
-            logger.error("[AppPayRequest] ", e);
+            log.error("[AppPayRequest] ", e);
         }
 
         return null;

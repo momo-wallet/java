@@ -9,7 +9,9 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoResponse> {
 
     public RefundMoMo(Environment environment) {
@@ -17,13 +19,14 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
     }
 
     public static RefundMoMoResponse process(Environment env, String requestId, String orderId, String amount, String transId) throws Exception {
-        RefundMoMo refundMoMo = new RefundMoMo(env);
         try {
+            RefundMoMo refundMoMo = new RefundMoMo(env);
+
             RefundMoMoRequest request = refundMoMo.createRefundRequest(requestId, orderId, amount, transId);
             RefundMoMoResponse response = refundMoMo.execute(request);
             return response;
         } catch (Exception exception) {
-            refundMoMo.logger.error("[RefundMoMoProcess] ", exception);
+            log.error("[RefundMoMoProcess] ", exception);
         }
         return null;
     }
@@ -52,7 +55,7 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_MOMO_WALLET;
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.info("[RefundMoMoResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundMoMoResponse.getSignature());
+            log.info("[RefundMoMoResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundMoMoResponse.getSignature());
 
             if (signature.equals(refundMoMoResponse.getSignature())) {
                 return refundMoMoResponse;
@@ -60,7 +63,7 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
                 throw new MoMoException("Wrong signature from MoMo side - please contact with us");
             }
         } catch (Exception e) {
-            logger.error("[RefundMoMoProcess] ", e);
+            log.error("[RefundMoMoProcess] ", e);
         }
         return null;
     }
@@ -79,9 +82,9 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
                             "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_MOMO_WALLET;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
 
-            logger.debug("[RefundMoMoRequest] rawData: " + rawData + ", [Signature] -> " + signature);
+            log.debug("[RefundMoMoRequest] rawData: " + rawData + ", [Signature] -> " + signature);
         } catch (Exception e) {
-            logger.error("[RefundMoMoProcess] ", e);
+            log.error("[RefundMoMoProcess] ", e);
         }
 
         RefundMoMoRequest request = RefundMoMoRequest

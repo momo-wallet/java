@@ -5,6 +5,7 @@
  */
 package com.mservice.shared.utils;
 
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.Cipher;
@@ -23,6 +24,7 @@ import java.util.Formatter;
  * @author khangdoan
  */
 @SuppressWarnings("restriction")
+@Slf4j
 public class Encoder {
 
     private static final char[] HEX_CHARS = "0123456789ABCDEF".toCharArray();
@@ -135,7 +137,7 @@ public class Encoder {
             cipher.init(Cipher.DECRYPT_MODE, prvk);
             return new String(cipher.doFinal(Base64.decodeBase64(encryptData)));
         } catch (Exception ex) {
-            ex.printStackTrace();
+            log.error("[DecryptRSA] Error: ", ex);
             return "";
         }
     }

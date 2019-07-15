@@ -4,16 +4,15 @@ import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.utils.Execute;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hainguyen
  * Documention: https://developers.momo.vn
  */
+
 public abstract class AbstractProcess<T, V> {
 
-    protected final Logger logger;
     protected PartnerInfo partnerInfo;
     protected Environment environment;
     protected Execute execute = new Execute();
@@ -21,7 +20,6 @@ public abstract class AbstractProcess<T, V> {
     public AbstractProcess(Environment environment) {
         this.environment = environment;
         this.partnerInfo = environment.getPartnerInfo();
-        this.logger = LoggerFactory.getLogger(getClass());
     }
 
     public static Gson getGson() {

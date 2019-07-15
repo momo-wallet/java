@@ -10,11 +10,13 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hainguyen
  * Documention: https://developers.momo.vn
  */
+@Slf4j
 public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMoResponse> {
 
     public CaptureMoMo(Environment environment) {
@@ -36,14 +38,15 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
      **/
 
     public static CaptureMoMoResponse process(Environment env, String orderId, String requestId, String amount, String orderInfo, String returnURL, String notifyURL, String extraData) throws Exception {
-        CaptureMoMo m2Processor = new CaptureMoMo(env);
         try {
+            CaptureMoMo m2Processor = new CaptureMoMo(env);
+
             CaptureMoMoRequest captureMoMoRequest = m2Processor.createPaymentCreationRequest(orderId, requestId, amount, orderInfo, returnURL, notifyURL, extraData);
             CaptureMoMoResponse captureMoMoResponse = m2Processor.execute(captureMoMoRequest);
 
             return captureMoMoResponse;
         } catch (Exception exception) {
-            m2Processor.logger.error("[CaptureMoMoProcess] ", exception);
+            log.error("[CaptureMoMoProcess] ", exception);
         }
         return null;
     }
@@ -73,7 +76,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.CAPTURE_MOMO_WALLET;
 
             String signResponse = Encoder.signHmacSHA256(responserawData, partnerInfo.getSecretKey());
-            logger.info("[CaptureMoMoResponse] rawData: " + responserawData + ", [Signature] -> " + signResponse + ", [MoMoSignature] -> " + captureMoMoResponse.getSignature());
+            log.info("[CaptureMoMoResponse] rawData: " + responserawData + ", [Signature] -> " + signResponse + ", [MoMoSignature] -> " + captureMoMoResponse.getSignature());
 
             if (signResponse.equals(captureMoMoResponse.getSignature())) {
                 return captureMoMoResponse;
@@ -82,7 +85,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
             }
 
         } catch (Exception exception) {
-            logger.error("[CaptureMoMoResponse] ", exception);
+            log.error("[CaptureMoMoResponse] ", exception);
             throw new IllegalArgumentException("Invalid params capture MoMo Request");
         }
     }
@@ -114,7 +117,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
-            logger.debug("[CaptureMoMoRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
+            log.debug("[CaptureMoMoRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
 
             return CaptureMoMoRequest
                     .builder()
@@ -131,7 +134,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                     .orderInfo(orderInfo)
                     .build();
         } catch (Exception e) {
-            logger.error("[CaptureMoMoRequest] ", e);
+            log.error("[CaptureMoMoRequest] ", e);
         }
 
         return null;
@@ -182,10 +185,10 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                 + Parameter.PAY_TYPE + "=" + paymentResponse.getPayType() + "&"
                 + Parameter.EXTRA_DATA + "=" + paymentResponse.getExtraData();
 
-        logger.debug("resultCaptureMoMoWallet::partnerRawDataBeforeHash::" + rawData);
+        log.debug("resultCaptureMoMoWallet::partnerRawDataBeforeHash::" + rawData);
         String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-        logger.debug("resultCaptureMoMoWallet::partnerSignature::" + signature);
-        logger.debug("resultCaptureMoMoWallet::momoSignature::" + paymentResponse.getSignature());
+        log.debug("resultCaptureMoMoWallet::partnerSignature::" + signature);
+        log.debug("resultCaptureMoMoWallet::momoSignature::" + paymentResponse.getSignature());
 
         if (signature.equals(paymentResponse.getSignature())) {
             return paymentResponse;

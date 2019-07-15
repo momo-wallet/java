@@ -9,7 +9,9 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
+@Slf4j
 public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMResponse> {
 
     public RefundATM(Environment environment) {
@@ -17,13 +19,14 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
     }
 
     public static RefundATMResponse process(Environment env, String orderId, String requestId, String amount, String transId, String bankCode) throws Exception {
-        RefundATM refundATM = new RefundATM(env);
         try {
+            RefundATM refundATM = new RefundATM(env);
+
             RefundATMRequest request = refundATM.createRefundATMRequest(requestId, orderId, amount, transId, bankCode);
             RefundATMResponse response = refundATM.execute(request);
             return response;
         } catch (Exception exception) {
-            refundATM.logger.error("[RefundATMProcess] ", exception);
+            log.error("[RefundATMProcess] ", exception);
         }
         return null;
     }
@@ -53,7 +56,7 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundATMResponse.getSignature());
+            log.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundATMResponse.getSignature());
 
             if (signature.equals(refundATMResponse.getSignature())) {
                 return refundATMResponse;
@@ -63,7 +66,7 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
 
 
         } catch (Exception exception) {
-            logger.error("[RefundATMResponse] ", exception);
+            log.error("[RefundATMResponse] ", exception);
         }
         return null;
     }
@@ -83,9 +86,9 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                             "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
 
-            logger.debug("[RefundATMRequest] rawData: " + rawData + ", [Signature] -> " + signature);
+            log.debug("[RefundATMRequest] rawData: " + rawData + ", [Signature] -> " + signature);
         } catch (Exception e) {
-            logger.error("[RefundATMRequest] ", e);
+            log.error("[RefundATMRequest] ", e);
         }
 
         RefundATMRequest request = RefundATMRequest

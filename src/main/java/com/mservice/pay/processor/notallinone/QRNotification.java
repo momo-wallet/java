@@ -8,16 +8,19 @@ import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 import okhttp3.Response;
 
+@Slf4j
 public class QRNotification extends AbstractProcess<QRNotifyRequest, QRNotifyResponse> {
     public QRNotification(Environment environment) {
         super(environment);
     }
 
     public static QRNotifyResponse process(Environment env, String rawPostData) throws Exception {
-        QRNotification qrNotification = new QRNotification(env);
         try {
+            QRNotification qrNotification = new QRNotification(env);
+
             QRNotifyRequest qrNotifyRequest = qrNotification.validateQRNotifyRequest(rawPostData);
 
             if (qrNotifyRequest != null) {
@@ -25,7 +28,7 @@ public class QRNotification extends AbstractProcess<QRNotifyRequest, QRNotifyRes
             }
 
         } catch (Exception exception) {
-            qrNotification.logger.error("[QRNotifyProcess] ", exception);
+            log.error("[QRNotifyProcess] ", exception);
         }
         return null;
     }
@@ -42,7 +45,7 @@ public class QRNotification extends AbstractProcess<QRNotifyRequest, QRNotifyRes
                     .toString();
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.debug("[QRNotifyResponseToMoMo] rawData: " + rawData + ", [Signature] -> " + signature);
+            log.debug("[QRNotifyResponseToMoMo] rawData: " + rawData + ", [Signature] -> " + signature);
 
             QRNotifyResponse qrNotifyResponse = QRNotifyResponse
                     .builder()
@@ -91,7 +94,7 @@ public class QRNotification extends AbstractProcess<QRNotifyRequest, QRNotifyRes
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
-            logger.info("[ValidateQRNotifyRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest + ", [MoMoSignature] -> " + qrNotifyRequest.getSignature());
+            log.info("[ValidateQRNotifyRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest + ", [MoMoSignature] -> " + qrNotifyRequest.getSignature());
 
             if (signRequest.equals(qrNotifyRequest.getSignature())) {
                 return qrNotifyRequest;
@@ -99,7 +102,7 @@ public class QRNotification extends AbstractProcess<QRNotifyRequest, QRNotifyRes
                 throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
             }
         } catch (Exception e) {
-            logger.error("[ValidateQRNotifyRequest] ", e);
+            log.error("[ValidateQRNotifyRequest] ", e);
         }
 
         return null;

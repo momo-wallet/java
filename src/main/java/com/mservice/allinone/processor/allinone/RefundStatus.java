@@ -12,6 +12,7 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
+import lombok.extern.slf4j.Slf4j;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +21,7 @@ import java.util.List;
  * @author hainguyen
  * Documention: https://developers.momo.vn
  */
+@Slf4j
 public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<RefundStatusResponse>> {
 
     public RefundStatus(Environment environment) {
@@ -27,14 +29,15 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
     }
 
     public static List<RefundStatusResponse> process(Environment env, String requestId, String orderId) throws Exception {
-        RefundStatus refundStatus = new RefundStatus(env);
 
         try {
+            RefundStatus refundStatus = new RefundStatus(env);
+
             RefundStatusRequest request = refundStatus.createRefundStatusRequest(requestId, orderId);
             List<RefundStatusResponse> response = refundStatus.execute(request);
             return response;
         } catch (Exception exception) {
-            refundStatus.logger.error("[RefundStatusProcess] " + exception);
+            log.error("[RefundStatusProcess] " + exception);
         }
         return new ArrayList<>();
     }
@@ -75,7 +78,7 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                         "&" + Parameter.REQUEST_TYPE + "=" + RequestType.QUERY_REFUND;
 
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                logger.info("[RefundStatusTransaction] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundMoMoResponse.getSignature());
+                log.info("[RefundStatusTransaction] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundMoMoResponse.getSignature());
 
                 if (signature.equals(refundMoMoResponse.getSignature())) {
                     responseList.add(refundMoMoResponse);
@@ -84,7 +87,7 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                 }
             }
         } catch (Exception e) {
-            logger.error("[RefundStatusResponse] " + e);
+            log.error("[RefundStatusResponse] " + e);
         }
 
         return responseList;
@@ -101,9 +104,9 @@ public class RefundStatus extends AbstractProcess<RefundStatusRequest, List<Refu
                             "&" + Parameter.ORDER_ID + "=" + orderId +
                             "&" + Parameter.REQUEST_TYPE + "=" + RequestType.QUERY_REFUND;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.debug("[RefundStatusRequest] rawData: " + rawData + ", [Signature] -> " + signature);
+            log.debug("[RefundStatusRequest] rawData: " + rawData + ", [Signature] -> " + signature);
         } catch (Exception e) {
-            logger.error("[RefundStatusRequest] " + e);
+            log.error("[RefundStatusRequest] " + e);
         }
 
         RefundStatusRequest refundStatusRequest = RefundStatusRequest

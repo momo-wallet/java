@@ -44,8 +44,8 @@ public class AllInOne {
 //          Please uncomment the code to actually use the necessary All-In-One gateway payment processes
 //          Remember to change the IDs
 
-//            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
-//            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
+            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
+            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
 
 //          Refund -- Manual Testing
 //            RefundMoMoResponse response = RefundMoMo.process(environment, "1562135830002", orderId, "10000", "2304963912");
