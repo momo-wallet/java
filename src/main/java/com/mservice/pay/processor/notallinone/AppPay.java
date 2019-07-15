@@ -50,16 +50,18 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
                 String rawData = Parameter.STATUS + "=" + appPayResponse.getStatus() +
                         "&" + Parameter.MESSAGE + "=" + appPayResponse.getMessage() +
                         "&" + Parameter.AMOUNT + "=" + appPayResponse.getAmount() +
-                        "&" + Parameter.PAY_TRANS_ID + "=" + appPayResponse.getTransId();
+                        "&" + Parameter.PAY_TRANS_ID + "=" + appPayResponse.getTransid();
 
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                logger.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getHash());
+                logger.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + appPayResponse.getSignature());
 
                 if (signature.equals(appPayResponse.getSignature())) {
                     return appPayResponse;
                 } else {
                     throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
                 }
+            } else {
+                logger.warn("[AppPayResponse] -> Process Failed: " + appPayResponse.getError().toString());
             }
         } catch (Exception e) {
             logger.error("[AppPayResponse] ", e);

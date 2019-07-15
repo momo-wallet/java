@@ -1,32 +1,32 @@
 package com.mservice.pay.models;
 
+import com.google.gson.JsonObject;
 import lombok.Builder;
 
 public class AppPayResponse extends PayResponse {
-    private String transid;
-    private Long amount;
+    protected String transid;
+    protected String message;
 
     @Builder
-    public AppPayResponse(Integer status, String message, String signature, String transId, Long amount) {
-        super(status, message, signature);
-        this.transid = transId;
-        this.amount = amount;
+    public AppPayResponse(Integer status, String signature, Long amount, JsonObject error, String transid, String message) {
+        super(status, signature, amount, error);
+        this.transid = transid;
+        this.message = message;
     }
 
-    public String getTransId() {
+    public String getTransid() {
         return transid;
     }
 
-    public void setTransId(String transId) {
-        this.transid = transId;
+    public void setTransid(String transid) {
+        this.transid = transid;
     }
 
-    public Long getAmount() {
-        return amount;
+    public String getMessage() {
+        return message;
     }
 
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setMessage(String message) {
+        this.message = message;
     }
-
 }

@@ -43,6 +43,9 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
             }
 
             TransactionRefundResponse transactionRefundResponse = getGson().fromJson(response.getData(), TransactionRefundResponse.class);
+            if (transactionRefundResponse.getStatus() != 0) {
+                logger.warn("[TransactionRefundResponse] -> Status: " + transactionRefundResponse.getStatus() + ", Message: " + transactionRefundResponse.getMessage());
+            }
 
             return transactionRefundResponse;
         } catch (Exception e) {
@@ -70,7 +73,7 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
             logger.debug("[TransactionRefundRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
             return TransactionRefundRequest
-                    .refundBuilder()
+                    .builder()
                     .partnerCode(partnerInfo.getPartnerCode())
                     .requestId(requestId)
                     .hash(hashRSA)

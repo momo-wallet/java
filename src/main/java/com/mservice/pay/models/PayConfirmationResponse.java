@@ -1,15 +1,26 @@
 package com.mservice.pay.models;
 
+import com.google.gson.JsonObject;
 import lombok.Builder;
 
 public class PayConfirmationResponse extends PayResponse {
 
-    private MoMoJson data;
+    protected MoMoJson data;
+    protected String message;
 
     @Builder
-    public PayConfirmationResponse(Integer status, String message, String signature, MoMoJson data) {
-        super(status, message, signature);
+    public PayConfirmationResponse(Integer status, String signature, Long amount, JsonObject error, MoMoJson data, String message) {
+        super(status, signature, amount, error);
         this.data = data;
+        this.message = message;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
     }
 
     public MoMoJson getData() {

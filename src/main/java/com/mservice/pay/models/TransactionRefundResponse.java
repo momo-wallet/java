@@ -1,18 +1,19 @@
 package com.mservice.pay.models;
 
+import com.google.gson.JsonObject;
 import lombok.Builder;
 
 public class TransactionRefundResponse extends PayResponse {
-    private String partnerRefId;
-    private Long transid;
-    private Long amount;
+    protected String partnerRefId;
+    protected Long transid;
+    protected String message;
 
-    @Builder(builderMethodName = "refundBuilder")
-    public TransactionRefundResponse(Integer status, String message, String signature, String partnerRefId, Long transid, Long amount) {
-        super(status, message, signature);
+    @Builder
+    public TransactionRefundResponse(Integer status, String signature, Long amount, JsonObject error, String partnerRefId, Long transid, String message) {
+        super(status, signature, amount, error);
         this.partnerRefId = partnerRefId;
         this.transid = transid;
-        this.amount = amount;
+        this.message = message;
     }
 
     public String getPartnerRefId() {
@@ -31,11 +32,11 @@ public class TransactionRefundResponse extends PayResponse {
         this.transid = transid;
     }
 
-    public Long getAmount() {
-        return amount;
+    public String getMessage() {
+        return message;
     }
 
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

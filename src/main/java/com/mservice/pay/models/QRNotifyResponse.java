@@ -1,19 +1,20 @@
 package com.mservice.pay.models;
 
+import com.google.gson.JsonObject;
 import lombok.Builder;
 
 public class QRNotifyResponse extends PayResponse {
 
-    private String partnerRefId;
-    private String momoTransId;
-    private Long amount;
+    protected String partnerRefId;
+    protected String momoTransId;
+    protected String message;
 
     @Builder
-    public QRNotifyResponse(Integer status, String message, String signature, String partnerRefId, String momoTransId, Long amount) {
-        super(status, message, signature);
+    public QRNotifyResponse(Integer status, String signature, Long amount, JsonObject error, String partnerRefId, String momoTransId, String message) {
+        super(status, signature, amount, error);
         this.partnerRefId = partnerRefId;
         this.momoTransId = momoTransId;
-        this.amount = amount;
+        this.message = message;
     }
 
     public String getPartnerRefId() {
@@ -32,11 +33,11 @@ public class QRNotifyResponse extends PayResponse {
         this.momoTransId = momoTransId;
     }
 
-    public Long getAmount() {
-        return amount;
+    public String getMessage() {
+        return message;
     }
 
-    public void setAmount(Long amount) {
-        this.amount = amount;
+    public void setMessage(String message) {
+        this.message = message;
     }
 }

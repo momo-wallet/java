@@ -69,7 +69,7 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
                     "&" + Parameter.EXTRA_DATA + "=" + queryStatusResponse.getExtraData();
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.info("[QueryStatusTransactionResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+            logger.info("[QueryStatusTransactionResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + queryStatusResponse.getSignature());
 
             if (signature.equals(queryStatusResponse.getSignature())) {
                 return queryStatusResponse;

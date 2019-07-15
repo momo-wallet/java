@@ -1,23 +1,18 @@
 package com.mservice.pay.models;
 
-public class TransactionQueryResponse {
+import com.google.gson.JsonObject;
+import lombok.Builder;
 
-    private Integer status;
+public class TransactionQueryResponse extends PayResponse {
+
     private String message;
     private MoMoJson data;
 
-    public TransactionQueryResponse(Integer status, String message, MoMoJson data) {
-        this.status = status;
+    @Builder
+    public TransactionQueryResponse(Integer status, String signature, Long amount, JsonObject error, String message, MoMoJson data) {
+        super(status, signature, amount, error);
         this.message = message;
         this.data = data;
-    }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
     }
 
     public String getMessage() {
@@ -35,5 +30,4 @@ public class TransactionQueryResponse {
     public void setData(MoMoJson data) {
         this.data = data;
     }
-
 }

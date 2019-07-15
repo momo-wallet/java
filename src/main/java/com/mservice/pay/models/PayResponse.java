@@ -1,15 +1,27 @@
 package com.mservice.pay.models;
 
+import com.google.gson.JsonObject;
+
 public class PayResponse {
 
-    private Integer status;
-    private String message;
-    private String signature;
+    protected Integer status;
+    protected String signature;
+    protected Long amount;
+    protected JsonObject error;
 
-    public PayResponse(Integer status, String message, String signature) {
+    public PayResponse(Integer status, String signature, Long amount, JsonObject error) {
         this.status = status;
-        this.message = message;
         this.signature = signature;
+        this.amount = amount;
+        this.error = error;
+    }
+
+    public JsonObject getError() {
+        return error;
+    }
+
+    public void setError(JsonObject error) {
+        this.error = error;
     }
 
     public Integer getStatus() {
@@ -20,19 +32,19 @@ public class PayResponse {
         this.status = status;
     }
 
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
-    }
-
     public String getSignature() {
         return signature;
     }
 
     public void setSignature(String signature) {
         this.signature = signature;
+    }
+
+    public Long getAmount() {
+        return amount;
+    }
+
+    public void setAmount(Long amount) {
+        this.amount = amount;
     }
 }

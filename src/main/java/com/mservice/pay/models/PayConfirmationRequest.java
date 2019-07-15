@@ -3,14 +3,14 @@ package com.mservice.pay.models;
 import lombok.Builder;
 
 public class PayConfirmationRequest extends PayRequest {
-    private String momoTransId;
-    private String requestType;
-    private String requestId;
-    private String signature;
+    protected String momoTransId;
+    protected String requestType;
+    protected String requestId;
+    protected String signature;
 
     @Builder
-    public PayConfirmationRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String momoTransId, String requestType, String requestId, String signature) {
-        super(partnerCode, partnerRefId, customerNumber, description);
+    public PayConfirmationRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, String momoTransId, String requestType, String requestId, String signature) {
+        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
         this.momoTransId = momoTransId;
         this.requestType = requestType;
         this.requestId = requestId;
@@ -49,3 +49,4 @@ public class PayConfirmationRequest extends PayRequest {
         this.signature = signature;
     }
 }
+

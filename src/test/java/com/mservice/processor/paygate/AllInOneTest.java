@@ -1,6 +1,6 @@
 package com.mservice.processor.paygate;
 
-import com.mservice.allinone.PayGate;
+import com.mservice.allinone.AllInOne;
 import com.mservice.allinone.models.CaptureMoMoResponse;
 import com.mservice.allinone.models.PayATMResponse;
 import com.mservice.allinone.models.QueryStatusTransactionResponse;
@@ -19,7 +19,7 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
-public class PayGateTest {
+public class AllInOneTest {
     PartnerInfo devInfo = new PartnerInfo("MOMOLRJZ20181206", "mTCKt9W3eU1m39TW", "KqBEecvaJf1nULnhPF5htpG3AMtDIOlD");
     Environment environment = new Environment("https://test-payment.momo.vn/gw_payment/transactionProcessor", devInfo, "development");
 
@@ -47,7 +47,7 @@ public class PayGateTest {
         // this is test, use your order_id
         String expectedStr = "{\"amount\":30000,\"partnerCode\":\"MOMOIQA420180417\",\"partnerTransId\":\"1560760777994\",\"customerNumber\":\"0963181714\",\"userName\":\"nhat.nguyen\",\"partnerRefId\":\"1560760777994\"}";
 
-        String hashRSA = PayGate.generateRSA(phoneNumber, requestId, requestId, username, partnerCode, amount, publicKey);
+        String hashRSA = AllInOne.generateRSA(phoneNumber, requestId, requestId, username, partnerCode, amount, publicKey);
         String decrypt = Encoder.decryptRSA(hashRSA, privateKey);
         assertEquals(expectedStr, decrypt, "Incorrect RSA Encryption/Decryption");
     }

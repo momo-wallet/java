@@ -51,13 +51,13 @@ public class PayConfirmation extends AbstractProcess<PayConfirmationRequest, Pay
                         "&" + Parameter.PARTNER_REF_ID + "=" + data.getPartnerRefId();
 
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                logger.info("[PayConfirmationResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+                logger.info("[PayConfirmationResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + payConfirmationResponse.getSignature());
 
                 if (!signature.equals(payConfirmationResponse.getSignature())) {
                     throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
                 }
             } else {
-                logger.warn("[PayConfirmationResponse] -> Process Failed: " + response.getData());
+                logger.warn("[PayConfirmationResponse] -> Status: " + payConfirmationResponse.getStatus() + ", Message: " + payConfirmationResponse.getMessage());
             }
             return payConfirmationResponse;
 

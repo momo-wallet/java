@@ -53,7 +53,7 @@ public class RefundATM extends AbstractProcess<RefundATMRequest, RefundATMRespon
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_ATM;
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+            logger.info("[RefundATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundATMResponse.getSignature());
 
             if (signature.equals(refundATMResponse.getSignature())) {
                 return refundATMResponse;

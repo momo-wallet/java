@@ -1,13 +1,17 @@
 package com.mservice.shared.sharedmodels;
 
+import okhttp3.Headers;
+
 public class HttpResponse {
 
     int status;
     String data;
+    Headers headers;
 
-    public HttpResponse(int status, String data) {
+    public HttpResponse(int status, String data, Headers headers) {
         this.status = status;
         this.data = data;
+        this.headers = headers;
     }
 
     public int getStatus() {
@@ -24,5 +28,13 @@ public class HttpResponse {
 
     public void setData(String data) {
         this.data = data;
+    }
+
+    public Headers getHeaders() {
+        return headers;
+    }
+
+    public void setHeaders(Headers headers) {
+        this.headers = headers;
     }
 }

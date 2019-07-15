@@ -40,7 +40,5 @@ public class Parameter {
 
     public static Double VERSION = 2.0;
     public static Integer APP_PAY_TYPE = 3;
-    public static String JSON_HEADER = "application/json; charset=utf-8";
-    public static String URLENCODED_HEADER = "application/x-www-form-urlencoded";
 
 }

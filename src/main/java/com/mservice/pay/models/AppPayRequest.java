@@ -4,18 +4,14 @@ import lombok.Builder;
 
 public class AppPayRequest extends PayRequest {
 
-    private String appData;
-    private String hash;
-    private double version;
-    private Integer payType;
+    protected String appData;
+    protected String hash;
 
     @Builder
-    public AppPayRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String appData, String hash, double version, Integer payType) {
-        super(partnerCode, partnerRefId, customerNumber, description);
+    public AppPayRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, String appData, String hash) {
+        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
         this.appData = appData;
         this.hash = hash;
-        this.version = version;
-        this.payType = payType;
     }
 
     public String getAppData() {
@@ -34,19 +30,4 @@ public class AppPayRequest extends PayRequest {
         this.hash = hash;
     }
 
-    public double getVersion() {
-        return version;
-    }
-
-    public void setVersion(double version) {
-        this.version = version;
-    }
-
-    public Integer getPayType() {
-        return payType;
-    }
-
-    public void setPayType(Integer payType) {
-        this.payType = payType;
-    }
 }

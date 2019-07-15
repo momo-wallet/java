@@ -3,16 +3,12 @@ package com.mservice.pay.models;
 import lombok.Builder;
 
 public class POSPayRequest extends PayRequest {
-    private String hash;
-    private Double version;
-    private Integer payType;
+    protected String hash;
 
     @Builder
-    public POSPayRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String hash, Double version, Integer payType, String partnerTransId) {
-        super(partnerCode, partnerRefId, customerNumber, description);
+    public POSPayRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, String hash) {
+        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
         this.hash = hash;
-        this.version = version;
-        this.payType = payType;
     }
 
     public String getHash() {
@@ -23,19 +19,4 @@ public class POSPayRequest extends PayRequest {
         this.hash = hash;
     }
 
-    public Double getVersion() {
-        return version;
-    }
-
-    public void setVersion(Double version) {
-        this.version = version;
-    }
-
-    public Integer getPayType() {
-        return payType;
-    }
-
-    public void setPayType(Integer payType) {
-        this.payType = payType;
-    }
 }

@@ -1,14 +1,14 @@
 package com.mservice.pay.models;
 
+import com.google.gson.JsonObject;
 import lombok.Builder;
 
-public class POSPayResponse {
-    private Integer status;
-    private MoMoJson message;
+public class POSPayResponse extends PayResponse {
+    protected MoMoJson message;
 
     @Builder
-    public POSPayResponse(Integer status, MoMoJson message) {
-        this.status = status;
+    public POSPayResponse(Integer status, String signature, Long amount, JsonObject error, MoMoJson message) {
+        super(status, signature, amount, error);
         this.message = message;
     }
 
@@ -19,13 +19,4 @@ public class POSPayResponse {
     public void setMessage(MoMoJson message) {
         this.message = message;
     }
-
-    public Integer getStatus() {
-        return status;
-    }
-
-    public void setStatus(Integer status) {
-        this.status = status;
-    }
-
 }

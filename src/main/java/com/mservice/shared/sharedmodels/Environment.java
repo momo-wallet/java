@@ -1,5 +1,7 @@
 package com.mservice.shared.sharedmodels;
 
+import com.mservice.shared.exception.MoMoException;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,6 +12,10 @@ public class Environment {
     private String momoEndpoint;
     private PartnerInfo partnerInfo;
     private String target;
+
+    public Environment(String momoEndpoint, PartnerInfo partnerInfo, EnvTarget target) {
+        this(momoEndpoint, partnerInfo, target.string());
+    }
 
     public Environment(String momoEndpoint, PartnerInfo partnerInfo, String target) {
         this.momoEndpoint = momoEndpoint;
@@ -24,43 +30,33 @@ public class Environment {
      * @param process name of the process the code is calling
      * @return
      **/
-    public static Environment selectEnv(String target, String process) {
-        try (InputStream input = Environment.class.getClassLoader().getResourceAsStream("environment.properties")) {
+    public static Environment selectEnv(String target, ProcessType process) throws IllegalArgumentException {
+        switch(target) {
+            case "dev":
+                return selectEnv(EnvTarget.DEV, process);
+            case "prod":
+                return selectEnv(EnvTarget.PROD, process);
+            default:
+                throw new IllegalArgumentException("MoMo doesnt provide other environment: dev and prod");
+        }
+    }
 
+    public static Environment selectEnv(EnvTarget target, ProcessType process) {
+        try (InputStream input = Environment.class.getClassLoader().getResourceAsStream("environment.properties")) {
             Properties prop = new Properties();
             prop.load(input);
 
-            String subDir = "";
-            switch (process) {
-                case "pay-gate":
-                    subDir = prop.getProperty("ALL_IN_ONE_PAYGATE");
-                    break;
-                case "app-in-app":
-                    subDir = prop.getProperty("APP_IN_APP");
-                    break;
-                case "pos":
-                    subDir = prop.getProperty("POS");
-                    break;
-                case "query-status":
-                    subDir = prop.getProperty("PAY_TRANSACTION_QUERY_STATUS");
-                    break;
-                case "pay-refund":
-                    subDir = prop.getProperty("PAY_REFUND");
-                    break;
-                case "pay-confirm":
-                    subDir = prop.getProperty("PAY_CONFIRM");
-                    break;
-            }
+            String subDir = process.getSubDir(prop);
 
             switch (target) {
-                case "dev":
+                case DEV:
                     PartnerInfo devInfo = new PartnerInfo(prop.getProperty("DEV_PARTNER_CODE"), prop.getProperty("DEV_ACCESS_KEY"), prop.getProperty("DEV_SECRET_KEY"));
-                    Environment dev = new Environment(prop.getProperty("DEV_MOMO_ENDPOINT") + subDir, devInfo, prop.getProperty("DEV"));
+                    Environment dev = new Environment(prop.getProperty("DEV_MOMO_ENDPOINT") + subDir, devInfo, target);
                     return dev;
-                case "prod":
+                case PROD:
                     PartnerInfo prodInfo = new PartnerInfo(prop.getProperty("PROD_PARTNER_CODE"), prop.getProperty("PROD_ACCESS_KEY"), prop.getProperty("PROD_SECRET_KEY"));
-                    Environment production = new Environment(prop.getProperty("PROD_MOMO_ENDPOINT") + subDir, prodInfo, prop.getProperty("PROD"));
-                    return production;
+                    Environment prod = new Environment(prop.getProperty("PROD_MOMO_ENDPOINT") + subDir, prodInfo, target);
+                    return prod;
                 default:
                     throw new IllegalArgumentException("MoMo doesnt provide other environment: dev and prod");
             }
@@ -96,4 +92,28 @@ public class Environment {
     public void setTarget(String target) {
         this.target = target;
     }
+
+    public enum EnvTarget {
+        DEV("development"), PROD("production");
+
+        private String target;
+
+        EnvTarget(String target) {
+            this.target = target;
+        }
+
+        public String string() {
+            return this.target;
+        }
+    }
+
+    public enum ProcessType {
+        PAY_GATE, APP_IN_APP, PAY_POS, PAY_QUERY_STATUS, PAY_REFUND, PAY_CONFIRM;
+
+        public String getSubDir(Properties prop) {
+            return prop.getProperty(this.toString());
+        }
+    }
+
+
 }

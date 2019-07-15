@@ -4,14 +4,12 @@ import lombok.Builder;
 
 public class TransactionQueryRequest extends PayRequest {
     private String hash;
-    private Double version;
     private String momoTransId;
 
     @Builder
-    public TransactionQueryRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String hash, Double version, String momoTransId) {
-        super(partnerCode, partnerRefId, customerNumber, description);
+    public TransactionQueryRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, String hash, String momoTransId) {
+        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
         this.hash = hash;
-        this.version = version;
         this.momoTransId = momoTransId;
     }
 
@@ -21,14 +19,6 @@ public class TransactionQueryRequest extends PayRequest {
 
     public void setHash(String hash) {
         this.hash = hash;
-    }
-
-    public Double getVersion() {
-        return version;
-    }
-
-    public void setVersion(Double version) {
-        this.version = version;
     }
 
     public String getMomoTransId() {

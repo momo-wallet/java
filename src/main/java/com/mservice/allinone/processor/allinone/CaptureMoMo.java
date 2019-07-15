@@ -64,25 +64,22 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
 
 //            errorMoMoProcess(captureMoMoResponse.getErrorCode());
 
-            if (captureMoMoResponse.getErrorCode() == 0) {
-                String responserawData = Parameter.REQUEST_ID + "=" + captureMoMoResponse.getRequestId() +
-                        "&" + Parameter.ORDER_ID + "=" + captureMoMoResponse.getOrderId() +
-                        "&" + Parameter.MESSAGE + "=" + captureMoMoResponse.getMessage() +
-                        "&" + Parameter.LOCAL_MESSAGE + "=" + captureMoMoResponse.getLocalMessage() +
-                        "&" + Parameter.PAY_URL + "=" + captureMoMoResponse.getPayUrl() +
-                        "&" + Parameter.ERROR_CODE + "=" + captureMoMoResponse.getErrorCode() +
-                        "&" + Parameter.REQUEST_TYPE + "=" + RequestType.CAPTURE_MOMO_WALLET;
+            String responserawData = Parameter.REQUEST_ID + "=" + captureMoMoResponse.getRequestId() +
+                    "&" + Parameter.ORDER_ID + "=" + captureMoMoResponse.getOrderId() +
+                    "&" + Parameter.MESSAGE + "=" + captureMoMoResponse.getMessage() +
+                    "&" + Parameter.LOCAL_MESSAGE + "=" + captureMoMoResponse.getLocalMessage() +
+                    "&" + Parameter.PAY_URL + "=" + captureMoMoResponse.getPayUrl() +
+                    "&" + Parameter.ERROR_CODE + "=" + captureMoMoResponse.getErrorCode() +
+                    "&" + Parameter.REQUEST_TYPE + "=" + RequestType.CAPTURE_MOMO_WALLET;
 
-                String signResponse = Encoder.signHmacSHA256(responserawData, partnerInfo.getSecretKey());
-                logger.info("[CaptureMoMoResponse] rawData: " + responserawData + ", [Signature] -> " + signResponse + ", [MoMoSignature] -> " + captureMoMoResponse.getSignature());
+            String signResponse = Encoder.signHmacSHA256(responserawData, partnerInfo.getSecretKey());
+            logger.info("[CaptureMoMoResponse] rawData: " + responserawData + ", [Signature] -> " + signResponse + ", [MoMoSignature] -> " + captureMoMoResponse.getSignature());
 
-                if (signResponse.equals(captureMoMoResponse.getSignature())) {
-                    return captureMoMoResponse;
-                } else {
-                    throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
-                }
+            if (signResponse.equals(captureMoMoResponse.getSignature())) {
+                return captureMoMoResponse;
+            } else {
+                throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
             }
-            return captureMoMoResponse;
 
         } catch (Exception exception) {
             logger.error("[CaptureMoMoResponse] ", exception);

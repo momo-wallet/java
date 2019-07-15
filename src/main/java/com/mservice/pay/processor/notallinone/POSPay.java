@@ -41,6 +41,9 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
             }
 
             POSPayResponse posPayResponse = getGson().fromJson(response.getData(), POSPayResponse.class);
+            if (posPayResponse.getStatus() != 0) {
+                logger.warn("[POSPayResponse] -> Status: " + posPayResponse.getStatus() + ", Message: " + posPayResponse.getMessage().getDescription());
+            }
 
             return posPayResponse;
         } catch (Exception e) {

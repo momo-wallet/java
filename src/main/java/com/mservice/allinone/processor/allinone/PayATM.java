@@ -50,9 +50,9 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
 //            errorMoMoProcess(payATMResponse.getErrorCode());
 
             String rawData =
-                    Parameter.PARTNER_CODE + "=" + request.getPartnerCode() +
-                            "&" + Parameter.ACCESS_KEY + "=" + request.getAccessKey() +
-                            "&" + Parameter.REQUEST_ID + "=" + request.getRequestId() +
+                    Parameter.PARTNER_CODE + "=" + payATMResponse.getPartnerCode() +
+                            "&" + Parameter.ACCESS_KEY + "=" + payATMResponse.getAccessKey() +
+                            "&" + Parameter.REQUEST_ID + "=" + payATMResponse.getRequestId() +
                             "&" + Parameter.PAY_URL + "=" + payATMResponse.getPayUrl() +
                             "&" + Parameter.ERROR_CODE + "=" + payATMResponse.getErrorCode() +
                             "&" + Parameter.ORDER_ID + "=" + payATMResponse.getOrderId() +
@@ -62,9 +62,9 @@ public class PayATM extends AbstractProcess<PayATMRequest, PayATMResponse> {
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
 
-            logger.info("[PayATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+            logger.info("[PayATMResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + payATMResponse.getSignature());
 
-            if (signature.equals(payATMResponse.getSignature())) {
+            if (signature.equals(payATMResponse.getSignature()) || payATMResponse.getSignature() == null) {
                 return payATMResponse;
             } else {
                 throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");

@@ -52,7 +52,7 @@ public class RefundMoMo extends AbstractProcess<RefundMoMoRequest, RefundMoMoRes
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.REFUND_MOMO_WALLET;
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            logger.info("[RefundMoMoResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + request.getSignature());
+            logger.info("[RefundMoMoResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + refundMoMoResponse.getSignature());
 
             if (signature.equals(refundMoMoResponse.getSignature())) {
                 return refundMoMoResponse;

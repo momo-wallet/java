@@ -4,22 +4,22 @@ import lombok.Builder;
 
 public class MoMoJson {
 
-    private String partnerCode;
-    private String partnerRefId;
-    private String momoTransId;
-    private Long amount;
-    private String description;
-    private Long transid;
-    private String phoneNumber;
-    private Integer status;
-    private String message;
-    private String billId;
-    private Long discountAmount;
-    private Long fee;
-    private String customerName;
-    private String storeId;
-    private String requestDate;
-    private String responseDate;
+    protected String partnerCode;
+    protected String partnerRefId;
+    protected String momoTransId;
+    protected Long amount;
+    protected String description;
+    protected Long transid;
+    protected String phoneNumber;
+    protected Integer status;
+    protected String message;
+    protected String billId;
+    protected Long discountAmount;
+    protected Long fee;
+    protected String customerName;
+    protected String storeId;
+    protected String requestDate;
+    protected String responseDate;
 
     @Builder
     public MoMoJson(String partnerCode, String partnerRefId, String momoTransId, Long amount, String description, Long transid, String phoneNumber, Integer status, String message, String billId, Long transId, Long discountAmount, Long fee, String customerName, String storeId, String requestDate, String responseDate) {

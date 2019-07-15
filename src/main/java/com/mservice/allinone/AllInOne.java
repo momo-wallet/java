@@ -7,7 +7,6 @@ import com.mservice.allinone.models.QueryStatusTransactionResponse;
 import com.mservice.allinone.models.RefundMoMoResponse;
 import com.mservice.allinone.processor.allinone.*;
 import com.mservice.shared.constants.Parameter;
-import com.mservice.shared.constants.ProcessType;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.utils.Encoder;
 
@@ -18,7 +17,7 @@ import java.util.Map;
 /**
  * Demo
  */
-public class PayGate {
+public class AllInOne {
 
     /***
      * Select environment
@@ -40,13 +39,13 @@ public class PayGate {
         String bankCode = "SML";
         String customerNumber = "0963181714";
 
-        Environment environment = Environment.selectEnv("dev", ProcessType.PAY_GATE);
+        Environment environment = Environment.selectEnv(Environment.EnvTarget.DEV, Environment.ProcessType.PAY_GATE);
 
 //          Please uncomment the code to actually use the necessary All-In-One gateway payment processes
 //          Remember to change the IDs
 
-            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
-            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
+//            CaptureMoMoResponse captureMoMoResponse = CaptureMoMo.process(environment, orderId, requestId, Long.toString(amount), "", returnURL, notifyURL, "");
+//            QueryStatusTransactionResponse queryStatusTransactionResponse = QueryStatusTransaction.process(environment, "1561972787557", "1562135830002");
 
 //          Refund -- Manual Testing
 //            RefundMoMoResponse response = RefundMoMo.process(environment, "1562135830002", orderId, "10000", "2304963912");
@@ -63,12 +62,12 @@ public class PayGate {
         String phoneNumber = "0963181714";
         String username = "nhat.nguyen";
 
-        orderId = String.valueOf(System.currentTimeMillis());
-        PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
+//        orderId = String.valueOf(System.currentTimeMillis());
+//        PayATMResponse payATMResponse = PayATM.process(environment, requestId, orderId, bankCode, "35000", "Pay With MoMo", returnURL, notifyURL, "");
 
 //        orderId = String.valueOf(System.currentTimeMillis());
 //        RefundATM.process(environment, orderId, "1561972550332", "10000", "2304962904", bankCode);
-        RefundStatus.process(environment, "1562135830002", "1561972787557");
+//        RefundStatus.process(environment, "1562135830002", "1561972787557");
 //
         generateRSA(customerNumber, "247", "247", "nhatnguyen", environment.getPartnerInfo().getPartnerCode(), amount, publicKey);
 
