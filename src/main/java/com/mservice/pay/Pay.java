@@ -7,7 +7,7 @@ import com.mservice.shared.constants.RequestType;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 
-public class PayTest {
+public class Pay {
 
     public static void main(String... args) throws Exception {
 

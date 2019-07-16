@@ -9,45 +9,47 @@ import okio.Buffer;
 import java.io.IOException;
 
 public class HttpRequest {
-    Request okRequest;
+    private String method;
+    private String endpoint;
+    private String payload;
+    private String contentType;
 
     public HttpRequest(String method, String endpoint, String payload, String contentType) {
-        this.okRequest = createRequest(method, endpoint, payload, contentType);
-    }
-
-    private static Request createRequest(String method, String endpoint, String payload, String contentType) {
-        RequestBody body = RequestBody.create(MediaType.get(contentType), payload);
-        return new Request.Builder()
-                .method(method, body)
-                .url(endpoint)
-                .build();
-    }
-
-    public Request getOkRequest() {
-        return this.okRequest;
-    }
-
-    public void setOkRequest(Request okRequest) {
-        this.okRequest = okRequest;
-    }
-
-    public HttpUrl getEndpoint() {
-        return this.getOkRequest().url();
+        this.method = method;
+        this.endpoint = endpoint;
+        this.payload = payload;
+        this.contentType = contentType;
     }
 
     public String getMethod() {
-        return this.getOkRequest().method();
+        return method;
     }
 
-    public RequestBody getBody() {
-        return this.getOkRequest().body();
+    public void setMethod(String method) {
+        this.method = method;
     }
 
-    public String getBodyAsString() throws IOException {
-        Buffer buffer = new Buffer();
-        RequestBody body = this.getBody();
-        body.writeTo(buffer);
-        return buffer.readUtf8();
+    public String getEndpoint() {
+        return endpoint;
     }
 
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+
+    public String getPayload() {
+        return payload;
+    }
+
+    public void setPayload(String payload) {
+        this.payload = payload;
+    }
+
+    public String getContentType() {
+        return contentType;
+    }
+
+    public void setContentType(String contentType) {
+        this.contentType = contentType;
+    }
 }

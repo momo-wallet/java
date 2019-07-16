@@ -23,13 +23,13 @@ public class Environment {
         this.target = target;
     }
 
-    /*
-     * Create and modify your environment.properties file appropriately
+    /**
      *
-     * @param target name of the environment (dev or prod)
-     * @param process name of the process the code is calling
+     * @param target String target name ("dev" or "prod")
+     * @param process
      * @return
-     **/
+     * @throws IllegalArgumentException
+     */
     public static Environment selectEnv(String target, ProcessType process) throws IllegalArgumentException {
         switch(target) {
             case "dev":
@@ -41,6 +41,14 @@ public class Environment {
         }
     }
 
+    /**
+     * Select appropriate environment to run processes
+     * Create and modify your environment.properties file appropriately
+     *
+     * @param target EnvTarget (choose DEV or PROD)
+     * @param process ProcessType
+     * @return
+     */
     public static Environment selectEnv(EnvTarget target, ProcessType process) {
         try (InputStream input = Environment.class.getClassLoader().getResourceAsStream("environment.properties")) {
             Properties prop = new Properties();
