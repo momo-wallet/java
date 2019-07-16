@@ -133,8 +133,11 @@ To generate the javadoc and sources jars, simply add the plugins:
 
 At the minimum, your package should have the executable jar, java doc and sources after the Maven package stage. Examples: 
 > momopayment-1.0-SNAPSHOT.jar
+
 > momopayment-1.0-SNAPSHOT-javadoc.jar
+
 > momopayment-1.0-SNAPSHOT-sources.jar
+
 
 #### III. Sign Artifacts  
 
@@ -216,13 +219,21 @@ To release your package to Maven central, you will need to sign and authenticate
 
 5. Build the project, enter your passphrase when prompted. Your target should be similar to this (after the verify stage): 
 > momopayment-1.0-SNAPSHOT.jar
+
 > momopayment-1.0-SNAPSHOT.jar.asc
+
 > momopayment-1.0-SNAPSHOT.pom
+
 > momopayment-1.0-SNAPSHOT.pom.asc
+
 > momopayment-1.0-SNAPSHOT-javadoc.jar
+
 > momopayment-1.0-SNAPSHOT-javadoc.jar.asc
+
 > momopayment-1.0-SNAPSHOT-sources.jar
+
 > momopayment-1.0-SNAPSHOT-sources.jar.asc
+
 
 ### Publishing Your Artifacts 
 
