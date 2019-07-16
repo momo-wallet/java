@@ -17,9 +17,9 @@ Example code to integrate MoMo E-Wallet as payment method
 For the snapshot version, you can add the following dependency to your `POM.xml`:
 ```     
         <dependency>
-            <groupId>io.github.lnguyen99</groupId>
+            <groupId>io.github.momo-wallet</groupId>
             <artifactId>momopayment</artifactId>
-            <version>1.0-SNAPSHOT</version>
+            <version>1.0</version>
         </dependency>
 ```
 Remember to specify your repository as following:
