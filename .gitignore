@@ -1,0 +1,12 @@
+target/
+.settings/
+.idea/
+.logs/
+*.iml
+.idea/*
+momopayment.iml
+.DS_Store
+.src/test/*
+.idea/workspace.xml
+._*.png
+log4j2/*
