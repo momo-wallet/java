@@ -31,7 +31,7 @@ public class Execute {
 
             return response;
         } catch (Exception e) {
-            log.error("[RefundMoMoProcess] ", e);
+            log.error("[ExecuteSendToMoMo] ", e);
         }
 
         return null;
