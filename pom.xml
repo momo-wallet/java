@@ -4,14 +4,14 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>io.github.lnguyen99</groupId>
+    <groupId>io.github.momo-wallet</groupId>
     <artifactId>momopayment</artifactId>
-    <version>1.0-SNAPSHOT</version>
+    <version>1.0</version>
     <packaging>jar</packaging>
 
     <name>momopayment</name>
     <description>MoMo Payment Java Library</description>
-    <url>https://github.com/lnguyen99/paygate</url>
+    <url>https://github.com/momo-wallet/java</url>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -168,6 +168,12 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-gpg-plugin</artifactId>
                 <version>1.6</version>
+                <configuration>
+                    <gpgArguments>
+                        <arg>--pinentry-mode</arg>
+                        <arg>loopback</arg>
+                    </gpgArguments>
+                </configuration>
                 <executions>
                     <execution>
                         <id>sign-artifacts</id>
@@ -241,10 +247,9 @@
     </distributionManagement>
 
     <scm>
-        <connection>scm:git:git://github.com/lnguyen99/paygate.git</connection>
-        <developerConnection>scm:git:git@github.com:lnguyen99/paygate.git</developerConnection>
-        <url>https://github.com/lnguyen99/paygate</url>
+        <connection>scm:git:git://github.com/momo-wallet/java.git</connection>
+        <developerConnection>scm:git:git@github.com:momo-wallet/java.git</developerConnection>
+        <url>https://github.com/momo-wallet/java</url>
         <tag>HEAD</tag>
     </scm>
-
 </project>
