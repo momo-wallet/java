@@ -1,6 +1,5 @@
 package com.mservice.allinone.models;
 
-import lombok.Builder;
 
 public class MoMoAppAuthorizeRequest extends PayGateRequest {
 
@@ -14,7 +13,6 @@ public class MoMoAppAuthorizeRequest extends PayGateRequest {
     private int appVersion;
     private String sessionData;
 
-    @Builder
     public MoMoAppAuthorizeRequest(String partnerCode, String orderId, String orderInfo, String accessKey, String amount, String signature, String extraData, String requestId, String notifyUrl, String returnUrl, String requestType, String email, String fullName, String clientId, String deeplinkCallback, String walletId, String pin, String platform, int appVersion, String sessionData) {
         super(partnerCode, orderId, orderInfo, accessKey, amount, signature, extraData, requestId, notifyUrl, returnUrl, requestType);
         this.email = email;

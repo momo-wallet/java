@@ -2,9 +2,9 @@ package com.mservice.shared.sharedmodels;
 
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
+import com.mservice.allinone.models.PayGateResponse;
 import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.utils.Execute;
-import lombok.extern.slf4j.Slf4j;
 
 /**
  * @author hainguyen

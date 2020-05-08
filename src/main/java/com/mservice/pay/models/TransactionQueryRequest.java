@@ -1,14 +1,12 @@
 package com.mservice.pay.models;
 
-import lombok.Builder;
 
 public class TransactionQueryRequest extends PayRequest {
     private String hash;
     private String momoTransId;
 
-    @Builder
-    public TransactionQueryRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, String hash, String momoTransId) {
-        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
+    public TransactionQueryRequest(String partnerCode, String partnerRefId,double version, String hash, String momoTransId) {
+        super(partnerCode, partnerRefId, "", "", version, null);
         this.hash = hash;
         this.momoTransId = momoTransId;
     }

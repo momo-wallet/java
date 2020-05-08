@@ -9,13 +9,12 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 public class TransactionRefund extends AbstractProcess<TransactionRefundRequest, TransactionRefundResponse> {
     public TransactionRefund(Environment environment) {
         super(environment);
@@ -30,7 +29,7 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
             return transactionRefundResponse;
 
         } catch (Exception e) {
-            log.error("[TransactionRefundProcess] ", e);
+            LogUtils.error("[TransactionRefundProcess] "+ e);
         }
         return null;
     }
@@ -46,12 +45,12 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
 
             TransactionRefundResponse transactionRefundResponse = getGson().fromJson(response.getData(), TransactionRefundResponse.class);
             if (transactionRefundResponse.getStatus() != 0) {
-                log.warn("[TransactionRefundResponse] -> Status: " + transactionRefundResponse.getStatus() + ", Message: " + transactionRefundResponse.getMessage());
+                LogUtils.warn("[TransactionRefundResponse] -> Status: " + transactionRefundResponse.getStatus() + ", Message: " + transactionRefundResponse.getMessage());
             }
 
             return transactionRefundResponse;
         } catch (Exception e) {
-            log.error("[TransactionRefundResponse] ", e);
+            LogUtils.error("[TransactionRefundResponse] "+ e);
         }
         return null;
     }
@@ -72,17 +71,12 @@ public class TransactionRefund extends AbstractProcess<TransactionRefundRequest,
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            log.debug("[TransactionRefundRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            LogUtils.debug("[TransactionRefundRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
-            return TransactionRefundRequest
-                    .builder()
-                    .partnerCode(partnerInfo.getPartnerCode())
-                    .requestId(requestId)
-                    .hash(hashRSA)
-                    .version(version)
-                    .build();
+            return new TransactionRefundRequest(partnerInfo.getPartnerCode(),version,requestId,hashRSA);
+
         } catch (Exception e) {
-            log.error("[TransactionRefundRequest] ", e);
+            LogUtils.error("[TransactionRefundRequest] "+ e);
         }
 
         return null;

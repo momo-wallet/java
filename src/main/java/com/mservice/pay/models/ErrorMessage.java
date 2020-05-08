@@ -1,7 +1,6 @@
 package com.mservice.pay.models;
 
 import com.google.gson.JsonObject;
-import lombok.Builder;
 
 public class ErrorMessage {
 

@@ -1,7 +1,6 @@
 package com.mservice.pay.models;
 
 import com.google.gson.JsonObject;
-import lombok.Builder;
 
 public class QRNotifyRequest extends PayResponse {
     //MoMo sends request to partner's server
@@ -15,7 +14,6 @@ public class QRNotifyRequest extends PayResponse {
     private Long responseTime;
     private String storeId;
 
-    @Builder
     public QRNotifyRequest(Integer status, String signature, Long amount, JsonObject error, String partnerRefId, String momoTransId, String message, String partnerCode, String accessKey, String partnerTransId, String transType, Long responseTime, String storeId) {
         super(status, signature, amount, error);
         this.partnerRefId = partnerRefId;

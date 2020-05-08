@@ -1,6 +1,5 @@
 package com.mservice.pay.models;
 
-import lombok.Builder;
 
 public class TransactionRefundRequest extends PayRequest {
     private Long amount;
@@ -9,14 +8,10 @@ public class TransactionRefundRequest extends PayRequest {
     private String hash;
     private String momoTransId;
 
-    @Builder
-    public TransactionRefundRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, Long amount, String storeId, String requestId, String hash, String momoTransId) {
-        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
-        this.amount = amount;
-        this.storeId = storeId;
+    public TransactionRefundRequest(String partnerCode,  double version,String requestId, String hash) {
+        super(partnerCode, "", "", "", version, null);
         this.requestId = requestId;
         this.hash = hash;
-        this.momoTransId = momoTransId;
     }
 
     public String getHash() {

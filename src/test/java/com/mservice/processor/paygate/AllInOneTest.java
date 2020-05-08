@@ -9,6 +9,7 @@ import com.mservice.allinone.processor.allinone.CaptureMoMo;
 import com.mservice.allinone.processor.allinone.PayATM;
 import com.mservice.allinone.processor.allinone.QueryStatusTransaction;
 import com.mservice.allinone.processor.allinone.RefundStatus;
+import com.mservice.pay.Pay;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.PartnerInfo;
 import com.mservice.shared.utils.Encoder;
@@ -47,7 +48,7 @@ public class AllInOneTest {
         // this is test, use your order_id
         String expectedStr = "{\"amount\":30000,\"partnerCode\":\"MOMOIQA420180417\",\"partnerTransId\":\"1560760777994\",\"customerNumber\":\"0963181714\",\"userName\":\"nhat.nguyen\",\"partnerRefId\":\"1560760777994\"}";
 
-        String hashRSA = AllInOne.generateRSA(phoneNumber, requestId, requestId, username, partnerCode, amount, publicKey);
+        String hashRSA = Pay.generateRSA(phoneNumber, requestId, requestId, username, partnerCode, amount, publicKey);
         String decrypt = Encoder.decryptRSA(hashRSA, privateKey);
         assertEquals(expectedStr, decrypt, "Incorrect RSA Encryption/Decryption");
     }

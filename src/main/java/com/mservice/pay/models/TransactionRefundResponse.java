@@ -1,14 +1,12 @@
 package com.mservice.pay.models;
 
 import com.google.gson.JsonObject;
-import lombok.Builder;
 
 public class TransactionRefundResponse extends PayResponse {
     protected String partnerRefId;
     protected Long transid;
     protected String message;
 
-    @Builder
     public TransactionRefundResponse(Integer status, String signature, Long amount, JsonObject error, String partnerRefId, Long transid, String message) {
         super(status, signature, amount, error);
         this.partnerRefId = partnerRefId;

@@ -9,13 +9,12 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, TransactionQueryResponse> {
 
     public TransactionQuery(Environment environment) {
@@ -31,7 +30,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
             return transactionQueryResponse;
 
         } catch (Exception e) {
-            log.error("[TransactionQueryProcess] ", e);
+            LogUtils.error("[TransactionQueryProcess] "+ e);
         }
         return null;
     }
@@ -50,7 +49,7 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
 
             return transactionQueryResponse;
         } catch (Exception e) {
-            log.error("[TransactionQueryResponse] ", e);
+            LogUtils.error("[TransactionQueryResponse] "+ e);
         }
         return null;
     }
@@ -70,18 +69,12 @@ public class TransactionQuery extends AbstractProcess<TransactionQueryRequest, T
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            log.debug("[TransactionQueryRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            LogUtils.debug("[TransactionQueryRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
-            return TransactionQueryRequest
-                    .builder()
-                    .partnerCode(partnerInfo.getPartnerCode())
-                    .partnerRefId(partnerRefId)
-                    .hash(hashRSA)
-                    .version(version)
-                    .momoTransId(momoTransId)
-                    .build();
+            return new TransactionQueryRequest(partnerInfo.getPartnerCode(),partnerRefId,version,hashRSA,momoTransId);
+
         } catch (Exception e) {
-            log.error("[TransactionQueryRequest] ", e);
+            LogUtils.error("[TransactionQueryRequest] "+ e);
         }
 
         return null;

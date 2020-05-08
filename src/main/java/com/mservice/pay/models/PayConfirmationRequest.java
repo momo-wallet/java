@@ -1,6 +1,5 @@
 package com.mservice.pay.models;
 
-import lombok.Builder;
 
 public class PayConfirmationRequest extends PayRequest {
     protected String momoTransId;
@@ -8,9 +7,8 @@ public class PayConfirmationRequest extends PayRequest {
     protected String requestId;
     protected String signature;
 
-    @Builder
-    public PayConfirmationRequest(String partnerCode, String partnerRefId, String customerNumber, String description, double version, Integer payType, String momoTransId, String requestType, String requestId, String signature) {
-        super(partnerCode, partnerRefId, customerNumber, description, version, payType);
+    public PayConfirmationRequest(String partnerCode, String partnerRefId, String customerNumber, String description, String momoTransId, String requestType, String requestId, String signature) {
+        super(partnerCode, partnerRefId, customerNumber, description, 0, null);
         this.momoTransId = momoTransId;
         this.requestType = requestType;
         this.requestId = requestId;

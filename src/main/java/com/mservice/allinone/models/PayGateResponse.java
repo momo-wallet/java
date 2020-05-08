@@ -4,7 +4,7 @@ import com.google.gson.Gson;
 
 import java.util.Date;
 
-public class PayGateResponse extends PayGateRequest {
+public class PayGateResponse extends MoMoPayment {
 
     private int errorCode;
     private String message;
@@ -14,8 +14,8 @@ public class PayGateResponse extends PayGateRequest {
     private String payType;
     private Date responseTime;
 
-    public PayGateResponse(String partnerCode, String orderId, String orderInfo, String accessKey, String amount, String signature, String extraData, String requestId, String notifyUrl, String returnUrl, String requestType, int errorCode, String message, String localMessage, String transId, String orderType, String payType, Date responseDate) {
-        super(partnerCode, orderId, orderInfo, accessKey, amount, signature, extraData, requestId, notifyUrl, returnUrl, requestType);
+    public PayGateResponse(String partnerCode, String accessKey, String orderId, String orderInfo, String amount, String signature, String extraData, String requestId, String requestType, int errorCode, String message, String localMessage, String transId, String orderType, String payType, Date responseDate) {
+        super(partnerCode, accessKey, orderId, requestId, amount, orderInfo, requestType, extraData, signature);
         this.errorCode = errorCode;
         this.message = message;
         this.localMessage = localMessage;
@@ -23,6 +23,17 @@ public class PayGateResponse extends PayGateRequest {
         this.orderType = orderType;
         this.payType = payType;
         this.responseTime = responseDate;
+    }
+
+    public PayGateResponse(String partnerCode, String accessKey, String orderId, String orderInfo, String amount, String signature, String extraData, String requestId, String requestType, int errorCode, String message, String localMessage, String transId) {
+        super(partnerCode, accessKey, orderId, requestId, amount, orderInfo, requestType, extraData, signature);
+        this.errorCode = errorCode;
+        this.message = message;
+        this.localMessage = localMessage;
+        this.transId = transId;
+    }
+
+    public PayGateResponse() {
     }
 
     public int getErrorCode() {

@@ -1,7 +1,5 @@
 package com.mservice.pay.models;
 
-import lombok.Builder;
-
 public class MoMoJson {
 
     protected String partnerCode;
@@ -21,7 +19,6 @@ public class MoMoJson {
     protected String requestDate;
     protected String responseDate;
 
-    @Builder
     public MoMoJson(String partnerCode, String partnerRefId, String momoTransId, Long amount, String description, Long transid, String phoneNumber, Integer status, String message, String billId, Long transId, Long discountAmount, Long fee, String customerName, String storeId, String requestDate, String responseDate) {
         this.partnerCode = partnerCode;
         this.partnerRefId = partnerRefId;

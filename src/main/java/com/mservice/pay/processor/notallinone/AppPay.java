@@ -9,13 +9,12 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
 
     public AppPay(Environment environment) {
@@ -30,7 +29,7 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
             AppPayResponse appPayResponse = appPay.execute(appPayRequest);
             return appPayResponse;
         } catch (Exception exception) {
-            log.error("[AppPayProcess] ", exception);
+            LogUtils.error("[AppPayProcess] "+ exception);
         }
         return null;
     }
@@ -54,7 +53,7 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
                         "&" + Parameter.PAY_TRANS_ID + "=" + appPayResponse.getTransid();
 
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                log.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + appPayResponse.getSignature());
+                LogUtils.info("[AppPayResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + appPayResponse.getSignature());
 
                 if (signature.equals(appPayResponse.getSignature())) {
                     return appPayResponse;
@@ -62,10 +61,10 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
                     throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
                 }
             } else {
-                log.warn("[AppPayResponse] -> Process Failed: " + appPayResponse.getError().toString());
+                LogUtils.warn("[AppPayResponse] -> Process Failed: " + appPayResponse.getError().toString());
             }
         } catch (Exception e) {
-            log.error("[AppPayResponse] ", e);
+            LogUtils.error("[AppPayResponse] "+ e);
         }
 
         return null;
@@ -91,21 +90,12 @@ public class AppPay extends AbstractProcess<AppPayRequest, AppPayResponse> {
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            log.debug("[AppPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            LogUtils.debug("[AppPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
-            return AppPayRequest
-                    .builder()
-                    .partnerCode(partnerInfo.getPartnerCode())
-                    .customerNumber(customerNumber)
-                    .partnerRefId(partnerRefId)
-                    .appData(appData)
-                    .hash(hashRSA)
-                    .description(description)
-                    .version(version)
-                    .payType(payType)
-                    .build();
+            return new AppPayRequest(partnerInfo.getPartnerCode(), partnerRefId, customerNumber,description,version,payType,appData,hashRSA);
+
         } catch (Exception e) {
-            log.error("[AppPayRequest] ", e);
+            LogUtils.error("[AppPayRequest] "+ e);
         }
 
         return null;

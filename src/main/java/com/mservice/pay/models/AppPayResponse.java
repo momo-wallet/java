@@ -1,13 +1,11 @@
 package com.mservice.pay.models;
 
 import com.google.gson.JsonObject;
-import lombok.Builder;
 
 public class AppPayResponse extends PayResponse {
     protected String transid;
     protected String message;
 
-    @Builder
     public AppPayResponse(Integer status, String signature, Long amount, JsonObject error, String transid, String message) {
         super(status, signature, amount, error);
         this.transid = transid;
@@ -28,5 +26,15 @@ public class AppPayResponse extends PayResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    @Override
+    public String toString() {
+        return "AppPayResponse {" +
+                "status : "+ getStatus() +"," +
+                "message : "+ message + "," +
+                "amount : " + getAmount() + "," +
+                "transid : " + transid + "," +
+                "signature : "+ getSignature() + "}";
     }
 }

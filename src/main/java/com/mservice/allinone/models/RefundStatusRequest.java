@@ -1,10 +1,8 @@
 package com.mservice.allinone.models;
 
-import lombok.Builder;
 
 public class RefundStatusRequest extends PayGateRequest {
-    @Builder
-    public RefundStatusRequest(String partnerCode, String orderId, String orderInfo, String accessKey, String amount, String signature, String extraData, String requestId, String notifyUrl, String returnUrl, String requestType) {
-        super(partnerCode, orderId, orderInfo, accessKey, amount, signature, extraData, requestId, notifyUrl, returnUrl, requestType);
+    public RefundStatusRequest(String partnerCode, String orderId, String accessKey, String signature, String requestId, String requestType) {
+        super(partnerCode, orderId, "", accessKey, "", signature, "", requestId, "", "", requestType);
     }
 }

@@ -1,20 +1,17 @@
 package com.mservice.shared.utils;
 
-import com.mservice.shared.exception.MoMoException;
 import com.mservice.shared.sharedmodels.HttpRequest;
 import com.mservice.shared.sharedmodels.HttpResponse;
-import lombok.extern.slf4j.Slf4j;
 import okhttp3.*;
 import okio.Buffer;
 
 import java.io.IOException;
 
-@Slf4j
 public class Execute {
 
     OkHttpClient client = new OkHttpClient();
 
-    public HttpResponse sendToMoMo(String endpoint, String payload) throws MoMoException {
+    public HttpResponse sendToMoMo(String endpoint, String payload) {
 
         try {
 
@@ -22,16 +19,16 @@ public class Execute {
 
             Request request = createRequest(httpRequest);
 
-            log.debug("[HttpPostToMoMo] Endpoint:: " + httpRequest.getEndpoint() + ", RequestBody:: " + httpRequest.getPayload());
+            LogUtils.debug("[HttpPostToMoMo] Endpoint:: " + httpRequest.getEndpoint() + ", RequestBody:: " + httpRequest.getPayload());
 
             Response result = client.newCall(request).execute();
             HttpResponse response = new HttpResponse(result.code(), result.body().string(), result.headers());
 
-            log.info("[HttpResponseFromMoMo] " + response.toString());
+            LogUtils.info("[HttpResponseFromMoMo] " + response.toString());
 
             return response;
         } catch (Exception e) {
-            log.error("[ExecuteSendToMoMo] ", e);
+            LogUtils.error("[ExecuteSendToMoMo] "+ e);
         }
 
         return null;

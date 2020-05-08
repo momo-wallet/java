@@ -10,13 +10,12 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
 /**
  * @author hainguyen
  * Documention: https://developers.momo.vn
  */
-@Slf4j
 public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMoResponse> {
 
     public CaptureMoMo(Environment environment) {
@@ -46,7 +45,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
 
             return captureMoMoResponse;
         } catch (Exception exception) {
-            log.error("[CaptureMoMoProcess] ", exception);
+            LogUtils.error("[CaptureMoMoProcess] "+ exception);
         }
         return null;
     }
@@ -63,6 +62,8 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                 throw new MoMoException("[CaptureMoMoResponse] [" + request.getOrderId() + "] -> Error API");
             }
 
+            System.out.println("uweryei7rye8wyreow8: "+ response.getData());
+
             CaptureMoMoResponse captureMoMoResponse = getGson().fromJson(response.getData(), CaptureMoMoResponse.class);
 
 //            errorMoMoProcess(captureMoMoResponse.getErrorCode());
@@ -76,7 +77,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                     "&" + Parameter.REQUEST_TYPE + "=" + RequestType.CAPTURE_MOMO_WALLET;
 
             String signResponse = Encoder.signHmacSHA256(responserawData, partnerInfo.getSecretKey());
-            log.info("[CaptureMoMoResponse] rawData: " + responserawData + ", [Signature] -> " + signResponse + ", [MoMoSignature] -> " + captureMoMoResponse.getSignature());
+            LogUtils.info("[CaptureMoMoResponse] rawData: " + responserawData + ", [Signature] -> " + signResponse + ", [MoMoSignature] -> " + captureMoMoResponse.getSignature());
 
             if (signResponse.equals(captureMoMoResponse.getSignature())) {
                 return captureMoMoResponse;
@@ -85,7 +86,7 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
             }
 
         } catch (Exception exception) {
-            log.error("[CaptureMoMoResponse] ", exception);
+            LogUtils.error("[CaptureMoMoResponse] "+ exception);
             throw new IllegalArgumentException("Invalid params capture MoMo Request");
         }
     }
@@ -117,24 +118,11 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
-            log.debug("[CaptureMoMoRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
+            LogUtils.debug("[CaptureMoMoRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
 
-            return CaptureMoMoRequest
-                    .builder()
-                    .accessKey(partnerInfo.getAccessKey())
-                    .requestId(requestId)
-                    .partnerCode(partnerInfo.getPartnerCode())
-                    .requestType(RequestType.CAPTURE_MOMO_WALLET)
-                    .notifyUrl(notifyUrl)
-                    .returnUrl(returnUrl)
-                    .orderId(orderId)
-                    .amount(amount)
-                    .signature(signRequest)
-                    .extraData(extraData)
-                    .orderInfo(orderInfo)
-                    .build();
+            return new CaptureMoMoRequest(partnerInfo.getPartnerCode(),orderId, orderInfo,partnerInfo.getAccessKey(),amount,signRequest,extraData,requestId,notifyUrl,returnUrl,RequestType.CAPTURE_MOMO_WALLET);
         } catch (Exception e) {
-            log.error("[CaptureMoMoRequest] ", e);
+            LogUtils.error("[CaptureMoMoRequest] "+ e);
         }
 
         return null;
@@ -185,10 +173,10 @@ public class CaptureMoMo extends AbstractProcess<CaptureMoMoRequest, CaptureMoMo
                 + Parameter.PAY_TYPE + "=" + paymentResponse.getPayType() + "&"
                 + Parameter.EXTRA_DATA + "=" + paymentResponse.getExtraData();
 
-        log.debug("resultCaptureMoMoWallet::partnerRawDataBeforeHash::" + rawData);
+        LogUtils.debug("resultCaptureMoMoWallet::partnerRawDataBeforeHash::" + rawData);
         String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-        log.debug("resultCaptureMoMoWallet::partnerSignature::" + signature);
-        log.debug("resultCaptureMoMoWallet::momoSignature::" + paymentResponse.getSignature());
+        LogUtils.debug("resultCaptureMoMoWallet::partnerSignature::" + signature);
+        LogUtils.debug("resultCaptureMoMoWallet::momoSignature::" + paymentResponse.getSignature());
 
         if (signature.equals(paymentResponse.getSignature())) {
             return paymentResponse;

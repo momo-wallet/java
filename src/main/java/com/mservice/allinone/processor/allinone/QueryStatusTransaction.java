@@ -9,13 +9,12 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
 /**
  * @author hainguyen
  * Documention: https://developers.momo.vn
  */
-@Slf4j
 public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransactionRequest, QueryStatusTransactionResponse> {
 
     public QueryStatusTransaction(Environment environment) {
@@ -28,7 +27,7 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
      * @param orderId   MoMo's order ID
      * @param requestId request ID
      **/
-    public static QueryStatusTransactionResponse process(Environment env, String orderId, String requestId) throws Exception {
+    public static QueryStatusTransactionResponse process(Environment env, String orderId, String requestId) {
         try {
             QueryStatusTransaction queryStatusTransaction = new QueryStatusTransaction(env);
 
@@ -37,7 +36,7 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
 
             return queryStatusResponse;
         } catch (Exception e) {
-            log.error("[QueryStatusProcess] ", e);
+            LogUtils.error("[QueryStatusProcess] "+ e);
         }
         return null;
     }
@@ -72,7 +71,7 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
                     "&" + Parameter.EXTRA_DATA + "=" + queryStatusResponse.getExtraData();
 
             String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            log.info("[QueryStatusTransactionResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + queryStatusResponse.getSignature());
+            LogUtils.info("[QueryStatusTransactionResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + queryStatusResponse.getSignature());
 
             if (signature.equals(queryStatusResponse.getSignature())) {
                 return queryStatusResponse;
@@ -81,7 +80,7 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
             }
 
         } catch (Exception e) {
-            log.error("[QueryStatusTransactionResponse] ", e);
+            LogUtils.error("[QueryStatusTransactionResponse] "+ e);
         }
         return null;
 
@@ -97,21 +96,14 @@ public class QueryStatusTransaction extends AbstractProcess<QueryStatusTransacti
                             "&" + Parameter.ORDER_ID + "=" + orderId +
                             "&" + Parameter.REQUEST_TYPE + "=" + RequestType.TRANSACTION_STATUS;
             signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-            log.debug("[QueryStatusTransactionRequest] rawData: " + rawData + ", [Signature] -> " + signature);
+            LogUtils.debug("[QueryStatusTransactionRequest] rawData: " + rawData + ", [Signature] -> " + signature);
 
         } catch (Exception e) {
-            log.error("[QueryStatusTransactionRequest] ", e);
+            LogUtils.error("[QueryStatusTransactionRequest] "+ e);
         }
 
-        QueryStatusTransactionRequest request = QueryStatusTransactionRequest
-                .builder()
-                .accessKey(partnerInfo.getAccessKey())
-                .partnerCode(partnerInfo.getPartnerCode())
-                .orderId(orderId)
-                .requestId(requestId)
-                .requestType(RequestType.TRANSACTION_STATUS)
-                .signature(signature)
-                .build();
+        QueryStatusTransactionRequest request = new QueryStatusTransactionRequest(partnerInfo.getPartnerCode(),orderId,partnerInfo.getAccessKey(),signature,requestId,RequestType.TRANSACTION_STATUS);
+
         return request;
     }
 

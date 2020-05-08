@@ -1,16 +1,13 @@
 package com.mservice.allinone.models;
 
-import lombok.Builder;
 
 public class PayATMRequest extends PayGateRequest {
 
     private String bankCode;
 
-    @Builder
-    public PayATMRequest(String partnerCode, String orderId, String orderInfo, String accessKey, String amount, String signature, String extraData, String requestId, String notifyUrl, String returnUrl, String requestType, String bankCode) {
+    public PayATMRequest(String partnerCode, String accessKey, String amount, String requestId, String orderId, String returnUrl, String notifyUrl, String orderInfo, String bankCode,String extraData, String requestType, String signature) {
         super(partnerCode, orderId, orderInfo, accessKey, amount, signature, extraData, requestId, notifyUrl, returnUrl, requestType);
-        this.bankCode = bankCode;
-    }
+        this.bankCode = bankCode;    }
 
     public String getBankCode() {
         return bankCode;

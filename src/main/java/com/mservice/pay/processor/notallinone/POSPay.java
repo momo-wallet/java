@@ -9,13 +9,12 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
 import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.Map;
 
-@Slf4j
 public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
     public POSPay(Environment environment) {
         super(environment);
@@ -29,7 +28,7 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
             POSPayResponse posPayResponse = posPay.execute(posPayProcessingRequest);
             return posPayResponse;
         } catch (Exception exception) {
-            log.error("[POSPayProcess] ", exception);
+            LogUtils.error("[POSPayProcess] "+ exception);
         }
         return null;
     }
@@ -45,12 +44,12 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
 
             POSPayResponse posPayResponse = getGson().fromJson(response.getData(), POSPayResponse.class);
             if (posPayResponse.getStatus() != 0) {
-                log.warn("[POSPayResponse] -> Status: " + posPayResponse.getStatus() + ", Message: " + posPayResponse.getMessage().getDescription());
+                LogUtils.warn("[POSPayResponse] -> Status: " + posPayResponse.getStatus() + ", Message: " + posPayResponse.getMessage().getDescription());
             }
 
             return posPayResponse;
         } catch (Exception e) {
-            log.error("[POSPayResponse] ", e);
+            LogUtils.error("[POSPayResponse] "+ e);
         }
         return null;
     }
@@ -73,19 +72,12 @@ public class POSPay extends AbstractProcess<POSPayRequest, POSPayResponse> {
             byte[] testByte = jsonStr.getBytes(StandardCharsets.UTF_8);
             String hashRSA = Encoder.encryptRSA(testByte, publicKey);
 
-            log.debug("[POSPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
+            LogUtils.debug("[POSPayRequest] rawData: " + rawData + ", [Signature] -> " + hashRSA);
 
-            return POSPayRequest
-                    .builder()
-                    .partnerCode(partnerInfo.getPartnerCode())
-                    .partnerRefId(partnerRefId)
-                    .hash(hashRSA)
-                    .description(description)
-                    .version(version)
-                    .payType(payType)
-                    .build();
+            return new POSPayRequest(partnerInfo.getPartnerCode(),partnerRefId,description,version,payType,hashRSA);
+
         } catch (Exception e) {
-            log.error("[POSPayRequest] ", e);
+            LogUtils.error("[POSPayRequest] "+ e);
         }
 
         return null;

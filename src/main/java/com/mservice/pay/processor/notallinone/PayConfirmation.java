@@ -9,9 +9,8 @@ import com.mservice.shared.sharedmodels.AbstractProcess;
 import com.mservice.shared.sharedmodels.Environment;
 import com.mservice.shared.sharedmodels.HttpResponse;
 import com.mservice.shared.utils.Encoder;
-import lombok.extern.slf4j.Slf4j;
+import com.mservice.shared.utils.LogUtils;
 
-@Slf4j
 public class PayConfirmation extends AbstractProcess<PayConfirmationRequest, PayConfirmationResponse> {
 
     public PayConfirmation(Environment environment) {
@@ -27,7 +26,7 @@ public class PayConfirmation extends AbstractProcess<PayConfirmationRequest, Pay
             PayConfirmationResponse payConfirmationResponse = payConfirmation.execute(payConfirmationRequest);
             return payConfirmationResponse;
         } catch (Exception e) {
-            log.error("[PayConfirmationProcess] ", e);
+            LogUtils.error("[PayConfirmationProcess] "+ e);
         }
         return null;
     }
@@ -53,18 +52,18 @@ public class PayConfirmation extends AbstractProcess<PayConfirmationRequest, Pay
                         "&" + Parameter.PARTNER_REF_ID + "=" + data.getPartnerRefId();
 
                 String signature = Encoder.signHmacSHA256(rawData, partnerInfo.getSecretKey());
-                log.info("[PayConfirmationResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + payConfirmationResponse.getSignature());
+                LogUtils.info("[PayConfirmationResponse] rawData: " + rawData + ", [Signature] -> " + signature + ", [MoMoSignature] -> " + payConfirmationResponse.getSignature());
 
                 if (!signature.equals(payConfirmationResponse.getSignature())) {
                     throw new IllegalArgumentException("Wrong signature from MoMo side - please contact with us");
                 }
             } else {
-                log.warn("[PayConfirmationResponse] -> Status: " + payConfirmationResponse.getStatus() + ", Message: " + payConfirmationResponse.getMessage());
+                LogUtils.warn("[PayConfirmationResponse] -> Status: " + payConfirmationResponse.getStatus() + ", Message: " + payConfirmationResponse.getMessage());
             }
             return payConfirmationResponse;
 
         } catch (Exception e) {
-            log.error("[PayConfirmationResponse] ", e);
+            LogUtils.error("[PayConfirmationResponse] "+ e);
         }
         return null;
     }
@@ -82,21 +81,12 @@ public class PayConfirmation extends AbstractProcess<PayConfirmationRequest, Pay
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
-            log.debug("[PayConfirmationResponse] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
+            LogUtils.debug("[PayConfirmationResponse] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
 
-            return PayConfirmationRequest
-                    .builder()
-                    .partnerCode(partnerInfo.getPartnerCode())
-                    .partnerRefId(partnerRefId)
-                    .requestType(requestType)
-                    .requestId(requestId)
-                    .momoTransId(momoTransId)
-                    .customerNumber(customerNumber)
-                    .description(description)
-                    .signature(signRequest)
-                    .build();
+            return new PayConfirmationRequest(partnerInfo.getPartnerCode(), partnerRefId, customerNumber, description, momoTransId, requestType,requestId, signRequest);
+
         } catch (Exception e) {
-            log.error("[PayConfirmationRequest] ", e);
+            LogUtils.error("[PayConfirmationRequest] "+ e);
         }
 
         return null;

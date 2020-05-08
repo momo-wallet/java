@@ -7,7 +7,7 @@ public class Extra {
     private HashMap<String, String> data;
 
     public Extra() {
-        this.data = new HashMap<>();
+        this.data = new HashMap<String, String>();
     }
 
     public void putParam(String key, String value) {

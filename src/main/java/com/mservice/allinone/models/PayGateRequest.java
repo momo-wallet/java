@@ -1,13 +1,10 @@
 package com.mservice.allinone.models;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
 
 /**
  * Created by Hai.Nguyen Date: 19-01-2018
  */
-@Getter
-@AllArgsConstructor
+
 public class PayGateRequest {
 
     private String partnerCode;
@@ -22,6 +19,9 @@ public class PayGateRequest {
     private String notifyUrl;
     private String returnUrl;
     private String requestType;
+
+    public PayGateRequest() {
+    }
 
     public String getPartnerCode() {
         return partnerCode;
@@ -126,5 +126,19 @@ public class PayGateRequest {
                 ", returnUrl='" + returnUrl + '\'' +
                 ", requestType='" + requestType + '\'' +
                 '}';
+    }
+
+    public PayGateRequest(String partnerCode, String orderId, String orderInfo, String accessKey, String amount, String signature, String extraData, String requestId, String notifyUrl, String returnUrl, String requestType) {
+        this.partnerCode = partnerCode;
+        this.orderId = orderId;
+        this.orderInfo = orderInfo;
+        this.accessKey = accessKey;
+        this.amount = amount;
+        this.signature = signature;
+        this.extraData = extraData;
+        this.requestId = requestId;
+        this.notifyUrl = notifyUrl;
+        this.returnUrl = returnUrl;
+        this.requestType = requestType;
     }
 }
