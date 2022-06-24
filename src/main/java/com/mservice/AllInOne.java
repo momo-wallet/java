@@ -27,8 +27,6 @@ public class AllInOne {
         String orderInfo = "Pay With MoMo";
         String returnURL = "https://google.com.vn";
         String notifyURL = "https://google.com.vn";
-        String extraData = "";
-        String bankCode = "SML";
 
         Environment environment = Environment.selectEnv("dev");
 
@@ -51,6 +49,9 @@ public class AllInOne {
 ////        Transaction Query - Kiểm tra trạng thái giao dịch
         QueryStatusTransactionResponse queryStatusTransactionResponse = QueryTransactionStatus.process(environment, orderId, requestId);
 
+        ////        Transaction Refund - hoàn tiền giao dịch
+        Long transId = 2L;
+        RefundMoMoResponse refundMoMoResponse = RefundTransaction.process(environment, orderId, requestId, Long.toString(amount), transId, "");
     }
 
 }
