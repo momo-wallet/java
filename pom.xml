@@ -51,6 +51,12 @@
             <organization>M-Service JSC</organization>
             <organizationUrl>https://momo.vn/</organizationUrl>
         </developer>
+        <developer>
+            <name>Le Sang</name>
+            <email>sang.le@mservice.com.vn</email>
+            <organization>M-Service JSC</organization>
+            <organizationUrl>https://momo.vn/</organizationUrl>
+        </developer>
     </developers>
 
     <build>
@@ -107,7 +113,7 @@
                                 <transformer
                                         implementation="org.apache.maven.plugins.shade.resource.ManifestResourceTransformer">
                                     <mainClass>
-                                        com.mservice.allinone.AllInOne
+                                        com.mservice.AllInOne
                                     </mainClass>
                                 </transformer>
                             </transformers>
@@ -241,6 +247,12 @@
             <groupId>com.vaadin.external.google</groupId>
             <artifactId>android-json</artifactId>
             <version>0.0.20131108.vaadin1</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jetbrains</groupId>
+            <artifactId>annotations</artifactId>
+            <version>RELEASE</version>
+            <scope>compile</scope>
         </dependency>
     </dependencies>
 

@@ -1,7 +1,7 @@
 package com.mservice.shared.utils;
 
-import com.mservice.shared.sharedmodels.HttpRequest;
-import com.mservice.shared.sharedmodels.HttpResponse;
+import com.mservice.models.HttpRequest;
+import com.mservice.models.HttpResponse;
 import okhttp3.*;
 import okio.Buffer;
 

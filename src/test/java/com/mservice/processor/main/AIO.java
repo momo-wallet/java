@@ -1,6 +1,6 @@
 package com.mservice.processor.main;
 
-import com.mservice.allinone.AllInOne;
+import com.mservice.AllInOne;
 
 public class AIO {
     public static void main(String[] args){

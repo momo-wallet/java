@@ -37,7 +37,7 @@ To understand and visualize how to use the library better, please consult our [t
 
 ### Setting Up MoMo Environment 
 MoMo provides 2 environments for integration: development(```dev```) and production(```prod```). 
-The model for environment is located at ```com.mservice.shared.sharedmodels.Environment```. You can use the function `selectEnv(String target, String process)` to choose the appropriate environment setup for the processes you are calling. 
+The model for environment is located at ```Environment```. You can use the function `selectEnv(String target, String process)` to choose the appropriate environment setup for the processes you are calling. 
  
 Example configuration is provided in ```environment.properties``` in `resources` folder. By default, slf4j2 is used with Console and RollingFile Appenders. 
 Please create your own configurations files for environment and log setup.  
