@@ -76,7 +76,7 @@ Version 1.0-SNAPSHOT
 * **Khang Đoàn** - khang.doan@mservice . com . vn
 * **Hải Nguyễn** - hai.nguyen@mservice . com . vn
 * **Linh Nguyễn** - linh.nguyen7@mservice . com . vn
-
+* **Sang Lê** - s@mservice . com . vn
 
 ## License
 (c) MoMo
