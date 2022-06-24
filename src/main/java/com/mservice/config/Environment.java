@@ -24,7 +24,6 @@ public class Environment {
     /**
      *
      * @param target String target name ("dev" or "prod")
-     * @param process
      * @return
      * @throws IllegalArgumentException
      */
@@ -55,8 +54,8 @@ public class Environment {
                 case DEV:
                     MoMoEndpoint devEndpoint = new MoMoEndpoint(prop.getProperty("DEV_MOMO_ENDPOINT"),
                             prop.getProperty("CREATE_URL"),
-                            prop.getProperty("QUERY_URL"),
                             prop.getProperty("REFUND_URL"),
+                            prop.getProperty("QUERY_URL"),
                             prop.getProperty("TOKEN_PAY_URL"),
                             prop.getProperty("TOKEN_BIND_URL"),
                             prop.getProperty("TOKEN_INQUIRY_URL"),
@@ -67,8 +66,8 @@ public class Environment {
                 case PROD:
                     MoMoEndpoint prodEndpoint = new MoMoEndpoint(prop.getProperty("PROD_MOMO_ENDPOINT"),
                             prop.getProperty("CREATE_URL"),
-                            prop.getProperty("QUERY_URL"),
                             prop.getProperty("REFUND_URL"),
+                            prop.getProperty("QUERY_URL"),
                             prop.getProperty("TOKEN_PAY_URL"),
                             prop.getProperty("TOKEN_BIND_URL"),
                             prop.getProperty("TOKEN_INQUIRY_URL"),

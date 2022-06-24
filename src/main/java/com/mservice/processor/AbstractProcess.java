@@ -29,24 +29,5 @@ public abstract class AbstractProcess<T, V> {
                 .create();
     }
 
-    /**
-     * Some errors will be showed in process
-     * Read detail error in documents
-     * [Find out] (https:/developers.momo.vn) - Section 7
-     *
-     * @param errorCode
-     * @throws Exception
-     */
-    public static void errorMoMoProcess(int errorCode) throws MoMoException {
-
-        switch (errorCode) {
-            case 0:
-                // O is meaning success
-                break;
-            case 1:
-                throw new MoMoException("Empty access key or partner code");
-        }
-    }
-
     public abstract V execute(T request) throws MoMoException;
 }
