@@ -22,7 +22,7 @@ public class QueryTransactionStatus extends AbstractProcess<QueryStatusTransacti
 
             return queryTransResponse;
         } catch (Exception exception) {
-            LogUtils.error("[CreateOrderMoMoProcess] "+ exception);
+            LogUtils.error("[QueryTransactionProcess] "+ exception);
         }
         return null;
     }
@@ -36,7 +36,7 @@ public class QueryTransactionStatus extends AbstractProcess<QueryStatusTransacti
             HttpResponse response = execute.sendToMoMo(environment.getMomoEndpoint().getQueryUrl(), payload);
 
             if (response.getStatus() != 200) {
-                throw new MoMoException("[PaymentResponse] [" + request.getOrderId() + "] -> Error API");
+                throw new MoMoException("[QueryTransactionResponse] [" + request.getOrderId() + "] -> Error API");
             }
 
             System.out.println("uweryei7rye8wyreow8: "+ response.getData());
@@ -47,12 +47,12 @@ public class QueryTransactionStatus extends AbstractProcess<QueryStatusTransacti
                     "&" + Parameter.MESSAGE + "=" + captureMoMoResponse.getMessage() +
                     "&" + Parameter.RESULT_CODE + "=" + captureMoMoResponse.getResultCode();
 
-            LogUtils.info("[PaymentMoMoResponse] rawData: " + responserawData);
+            LogUtils.info("[QueryTransactionResponse] rawData: " + responserawData);
 
             return captureMoMoResponse;
 
         } catch (Exception exception) {
-            LogUtils.error("[PaymentMoMoResponse] "+ exception);
+            LogUtils.error("[QueryTransactionResponse] "+ exception);
             throw new IllegalArgumentException("Invalid params capture MoMo Request");
         }
     }
@@ -68,11 +68,11 @@ public class QueryTransactionStatus extends AbstractProcess<QueryStatusTransacti
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
-            LogUtils.debug("[PaymentRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
+            LogUtils.debug("[QueryTransactionRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
 
             return new QueryStatusTransactionRequest(partnerInfo.getPartnerCode(), orderId, requestId, Language.EN, signRequest);
         } catch (Exception e) {
-            LogUtils.error("[PaymentRequest] "+ e);
+            LogUtils.error("[QueryTransactionRequest] "+ e);
         }
 
         return null;

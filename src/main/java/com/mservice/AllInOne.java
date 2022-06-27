@@ -22,6 +22,7 @@ public class AllInOne {
         LogUtils.init();
         String requestId = String.valueOf(System.currentTimeMillis());
         String orderId = String.valueOf(System.currentTimeMillis());
+        Long transId = 2L;
         long amount = 50000;
 
         String orderInfo = "Pay With MoMo";
@@ -33,25 +34,46 @@ public class AllInOne {
 
 //      Remember to change the IDs at enviroment.properties file
 
-//        Payment Method- Phương thức thanh toán
-        PaymentResponse captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET);
+        /***
+         * create payment with capture momo wallet
+         */
+//        PaymentResponse captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET);
+//
+//        orderId = String.valueOf(System.currentTimeMillis());
+//        requestId = String.valueOf(System.currentTimeMillis());
 
-        orderId = String.valueOf(System.currentTimeMillis());
-        requestId = String.valueOf(System.currentTimeMillis());
-        //        Payment Method- Phương thức thanh toán
-        PaymentResponse captureATMMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_ATM);
+        /***
+         * create payment with Momo's ATM type
+         */
+//        PaymentResponse captureATMMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_ATM);
+//
+//        orderId = String.valueOf(System.currentTimeMillis());
+//        requestId = String.valueOf(System.currentTimeMillis());
+        //        Payment Method- Phương thức thanh toán MoMo's Credit
+        /***
+         * create payment with Momo's Credit type
+         */
+//        PaymentResponse captureCreditMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_CREDIT);
+//
+//        orderId = String.valueOf(System.currentTimeMillis());
+//        requestId = String.valueOf(System.currentTimeMillis());
+        /***
+         * confirm transaction with Momo's ATM type
+         */
+//        ConfirmResponse confirmResponse = ConfirmTransaction.process(environment, orderId, requestId, Long.toString(amount), ConfirmRequestType.CAPTURE, "");
 
-        orderId = String.valueOf(System.currentTimeMillis());
-        requestId = String.valueOf(System.currentTimeMillis());
-        //        Payment Method- Phương thức thanh toán
-        PaymentResponse captureCreditMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_CREDIT);
+        /***
+         * query transaction
+         */
+//        QueryStatusTransactionResponse queryStatusTransactionResponse = QueryTransactionStatus.process(environment, orderId, requestId);
 
-////        Transaction Query - Kiểm tra trạng thái giao dịch
-        QueryStatusTransactionResponse queryStatusTransactionResponse = QueryTransactionStatus.process(environment, orderId, requestId);
+        transId = 2L;
+        /***
+         * refund transaction
+         */
+//        RefundMoMoResponse refundMoMoResponse = RefundTransaction.process(environment, orderId, requestId, Long.toString(amount), transId, "");
 
-        ////        Transaction Refund - hoàn tiền giao dịch
-        Long transId = 2L;
-        RefundMoMoResponse refundMoMoResponse = RefundTransaction.process(environment, orderId, requestId, Long.toString(amount), transId, "");
+
     }
 
 }
