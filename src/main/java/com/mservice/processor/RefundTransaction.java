@@ -47,12 +47,12 @@ public class RefundTransaction extends AbstractProcess<RefundMoMoRequest, Refund
                     "&" + Parameter.MESSAGE + "=" + refundMoMoResponse.getMessage() +
                     "&" + Parameter.RESULT_CODE + "=" + refundMoMoResponse.getResultCode();
 
-            LogUtils.info("[PaymentMoMoResponse] rawData: " + responserawData);
+            LogUtils.info("[RefundResponse] rawData: " + responserawData);
 
             return refundMoMoResponse;
 
         } catch (Exception exception) {
-            LogUtils.error("[PaymentMoMoResponse] "+ exception);
+            LogUtils.error("[RefundResponse] "+ exception);
             throw new IllegalArgumentException("Invalid params capture MoMo Request");
         }
     }

@@ -8,7 +8,7 @@ public class MoMoEndpoint {
     private String confirm;
     private String tokenPay;
     private String tokenBind;
-    private String tokenQueryCb;
+    private String tokenCbInquiry;
     private String tokenDelete;
 
     public MoMoEndpoint(String endpoint, String create, String refund, String query, String confirm, String tokenPay, String tokenBind, String tokenQueryCb, String tokenDelete) {
@@ -19,7 +19,7 @@ public class MoMoEndpoint {
         this.query = query;
         this.tokenPay = tokenPay;
         this.tokenBind = tokenBind;
-        this.tokenQueryCb = tokenQueryCb;
+        this.tokenCbInquiry = tokenQueryCb;
         this.tokenDelete = tokenDelete;
     }
 
@@ -47,11 +47,11 @@ public class MoMoEndpoint {
         return endpoint + tokenBind;
     }
 
-    public String getTokenQueryCb() {
-        return tokenQueryCb;
+    public String getTokenQueryCbInquiryUrl() {
+        return endpoint + tokenCbInquiry;
     }
 
     public String getTokenDelete() {
-        return tokenDelete;
+        return endpoint + tokenDelete;
     }
 }

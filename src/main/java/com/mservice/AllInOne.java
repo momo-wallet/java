@@ -25,6 +25,7 @@ public class AllInOne {
         Long transId = 2L;
         long amount = 50000;
 
+        String partnerClientId = "partnerClientId";
         String orderInfo = "Pay With MoMo";
         String returnURL = "https://google.com.vn";
         String notifyURL = "https://google.com.vn";
@@ -73,6 +74,11 @@ public class AllInOne {
          */
 //        RefundMoMoResponse refundMoMoResponse = RefundTransaction.process(environment, orderId, requestId, Long.toString(amount), transId, "");
 
+        /***
+         * inquiry cbToken
+         */
+        partnerClientId = "sang.le@mservice.com.vn";
+//        CbTokenInquiryResponse refundMoMoResponse = InquiryCbToken.process(environment, orderId, requestId, partnerClientId);
 
     }
 
