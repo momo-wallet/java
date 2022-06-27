@@ -103,7 +103,7 @@ public class AllInOne {
          */
         partnerClientId = "sang.le@mservice.com.vn";
         token = "ajkhsajshajhsaj"; // Token after received from binding and decrypt AES then encrypt RSA
-//        DeleteTokenResponse cbTokenInquiryResponse = DeleteToken.process(environment, orderId, requestId, partnerClientId, token);
+//        DeleteTokenResponse deleteTokenResponse = DeleteToken.process(environment, orderId, requestId, partnerClientId, token);
 
     }
 
