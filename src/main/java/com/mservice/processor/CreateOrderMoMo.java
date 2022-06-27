@@ -97,11 +97,11 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
                     .append(Parameter.ACCESS_KEY).append("=").append(partnerInfo.getAccessKey()).append("&")
                     .append(Parameter.AMOUNT).append("=").append(amount).append("&")
                     .append(Parameter.EXTRA_DATA).append("=").append(extraData).append("&")
-                    .append("ipnUrl").append("=").append(notifyUrl).append("&")
+                    .append(Parameter.IPN_URL).append("=").append(notifyUrl).append("&")
                     .append(Parameter.ORDER_ID).append("=").append(orderId).append("&")
                     .append(Parameter.ORDER_INFO).append("=").append(orderInfo).append("&")
                     .append(Parameter.PARTNER_CODE).append("=").append(partnerInfo.getPartnerCode()).append("&")
-                    .append("redirectUrl").append("=").append(returnUrl).append("&")
+                    .append(Parameter.REDIRECT_URL).append("=").append(returnUrl).append("&")
                     .append(Parameter.REQUEST_ID).append("=").append(requestId).append("&")
                     .append(Parameter.REQUEST_TYPE).append("=").append(requestType.getRequestType())
                     .toString();

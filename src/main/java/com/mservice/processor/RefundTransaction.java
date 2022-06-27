@@ -63,11 +63,11 @@ public class RefundTransaction extends AbstractProcess<RefundMoMoRequest, Refund
             String requestRawData = new StringBuilder()
                     .append(Parameter.ACCESS_KEY).append("=").append(partnerInfo.getAccessKey()).append("&")
                     .append(Parameter.AMOUNT).append("=").append(amount).append("&")
-                    .append("description").append("=").append(description).append("&")
+                    .append(Parameter.DESCRIPTION).append("=").append(description).append("&")
                     .append(Parameter.ORDER_ID).append("=").append(orderId).append("&")
                     .append(Parameter.PARTNER_CODE).append("=").append(partnerInfo.getPartnerCode()).append("&")
                     .append(Parameter.REQUEST_ID).append("=").append(requestId).append("&")
-                    .append("transId").append("=").append(transId)
+                    .append(Parameter.TRANS_ID).append("=").append(transId)
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());

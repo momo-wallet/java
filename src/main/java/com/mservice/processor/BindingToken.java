@@ -62,9 +62,9 @@ public class BindingToken extends AbstractProcess<BindingTokenRequest, BindingTo
         try {
             String requestRawData = new StringBuilder()
                     .append(Parameter.ACCESS_KEY).append("=").append(partnerInfo.getAccessKey()).append("&")
-                    .append("callbackToken").append("=").append(callbackToken).append("&")
+                    .append(Parameter.CALLBACK_TOKEN).append("=").append(callbackToken).append("&")
                     .append(Parameter.ORDER_ID).append("=").append(orderId).append("&")
-                    .append("partnerClientId").append("=").append(partnerClientId).append("&")
+                    .append(Parameter.PARTNER_CLIENT_ID).append("=").append(partnerClientId).append("&")
                     .append(Parameter.PARTNER_CODE).append("=").append(partnerInfo.getPartnerCode()).append("&")
                     .append(Parameter.REQUEST_ID).append("=").append(requestId)
                     .toString();

@@ -41,15 +41,15 @@ public class QueryTransactionStatus extends AbstractProcess<QueryStatusTransacti
 
             System.out.println("uweryei7rye8wyreow8: "+ response.getData());
 
-            QueryStatusTransactionResponse captureMoMoResponse = getGson().fromJson(response.getData(), QueryStatusTransactionResponse.class);
-            String responserawData = Parameter.REQUEST_ID + "=" + captureMoMoResponse.getRequestId() +
-                    "&" + Parameter.ORDER_ID + "=" + captureMoMoResponse.getOrderId() +
-                    "&" + Parameter.MESSAGE + "=" + captureMoMoResponse.getMessage() +
-                    "&" + Parameter.RESULT_CODE + "=" + captureMoMoResponse.getResultCode();
+            QueryStatusTransactionResponse queryStatusTransactionResponse = getGson().fromJson(response.getData(), QueryStatusTransactionResponse.class);
+            String responserawData = Parameter.REQUEST_ID + "=" + queryStatusTransactionResponse.getRequestId() +
+                    "&" + Parameter.ORDER_ID + "=" + queryStatusTransactionResponse.getOrderId() +
+                    "&" + Parameter.MESSAGE + "=" + queryStatusTransactionResponse.getMessage() +
+                    "&" + Parameter.RESULT_CODE + "=" + queryStatusTransactionResponse.getResultCode();
 
             LogUtils.info("[QueryTransactionResponse] rawData: " + responserawData);
 
-            return captureMoMoResponse;
+            return queryStatusTransactionResponse;
 
         } catch (Exception exception) {
             LogUtils.error("[QueryTransactionResponse] "+ exception);

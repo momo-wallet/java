@@ -46,16 +46,16 @@ public class PayByToken extends AbstractProcess<PaymentTokenRequest, PaymentResp
 
             System.out.println("uweryei7rye8wyreow8: "+ response.getData());
 
-            PaymentResponse captureMoMoResponse = getGson().fromJson(response.getData(), PaymentResponse.class);
-            String responserawData = Parameter.REQUEST_ID + "=" + captureMoMoResponse.getRequestId() +
-                    "&" + Parameter.ORDER_ID + "=" + captureMoMoResponse.getOrderId() +
-                    "&" + Parameter.MESSAGE + "=" + captureMoMoResponse.getMessage() +
-                    "&" + Parameter.PAY_URL + "=" + captureMoMoResponse.getPayUrl() +
-                    "&" + Parameter.RESULT_CODE + "=" + captureMoMoResponse.getResultCode();
+            PaymentResponse paymentResponse = getGson().fromJson(response.getData(), PaymentResponse.class);
+            String responserawData = Parameter.REQUEST_ID + "=" + paymentResponse.getRequestId() +
+                    "&" + Parameter.ORDER_ID + "=" + paymentResponse.getOrderId() +
+                    "&" + Parameter.MESSAGE + "=" + paymentResponse.getMessage() +
+                    "&" + Parameter.PAY_URL + "=" + paymentResponse.getPayUrl() +
+                    "&" + Parameter.RESULT_CODE + "=" + paymentResponse.getResultCode();
 
             LogUtils.info("[PaymentMoMoResponse] rawData: " + responserawData);
 
-            return captureMoMoResponse;
+            return paymentResponse;
 
         } catch (Exception exception) {
             LogUtils.error("[PaymentMoMoResponse] "+ exception);
@@ -72,10 +72,10 @@ public class PayByToken extends AbstractProcess<PaymentTokenRequest, PaymentResp
                     .append(Parameter.EXTRA_DATA).append("=").append(extraData).append("&")
                     .append(Parameter.ORDER_ID).append("=").append(orderId).append("&")
                     .append(Parameter.ORDER_INFO).append("=").append(orderInfo).append("&")
-                    .append("partnerClientId").append("=").append(partnerClientId).append("&")
+                    .append(Parameter.PARTNER_CLIENT_ID).append("=").append(partnerClientId).append("&")
                     .append(Parameter.PARTNER_CODE).append("=").append(partnerInfo.getPartnerCode()).append("&")
                     .append(Parameter.REQUEST_ID).append("=").append(requestId).append("&")
-                    .append("token").append("=").append(token)
+                    .append(Parameter.TOKEN).append("=").append(token)
                     .toString();
 
             String signRequest = Encoder.signHmacSHA256(requestRawData, partnerInfo.getSecretKey());
