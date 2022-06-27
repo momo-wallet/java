@@ -18,9 +18,9 @@ public class InquiryCbToken extends AbstractProcess<CbTokenInquiryRequest, CbTok
             InquiryCbToken m2Processor = new InquiryCbToken(env);
 
             CbTokenInquiryRequest request = m2Processor.createInquiryTokenRequest(orderId, requestId, partnerClientId);
-            CbTokenInquiryResponse queryTransResponse = m2Processor.execute(request);
+            CbTokenInquiryResponse cbTokenInquiryResponse = m2Processor.execute(request);
 
-            return queryTransResponse;
+            return cbTokenInquiryResponse;
         } catch (Exception exception) {
             LogUtils.error("[TokenInquiryProcess] "+ exception);
         }
@@ -55,11 +55,9 @@ public class InquiryCbToken extends AbstractProcess<CbTokenInquiryRequest, CbTok
             LogUtils.error("[CbTokenInquiryResponse] "+ exception);
             throw new IllegalArgumentException("Invalid params capture MoMo Request");
         }
-
     }
 
     public CbTokenInquiryRequest createInquiryTokenRequest(String orderId, String requestId, String partnerClientId) {
-
         try {
             String requestRawData = new StringBuilder()
                     .append(Parameter.ACCESS_KEY).append("=").append(partnerInfo.getAccessKey()).append("&")

@@ -51,7 +51,7 @@ public class MoMoEndpoint {
         return endpoint + tokenCbInquiry;
     }
 
-    public String getTokenDelete() {
+    public String getTokenDeleteUrl() {
         return endpoint + tokenDelete;
     }
 }

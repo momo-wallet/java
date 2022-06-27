@@ -95,8 +95,15 @@ public class AllInOne {
          */
         partnerClientId = "sang.le@mservice.com.vn";
         callbackToken = "abc"; // received from notification or cbToken Inquiry API
-        token = "ajkhsajshajhsaj"; // Token after received from binding and decrypt AES then encrupt RSA
+        token = "ajkhsajshajhsaj"; // Token after received from binding and decrypt AES then encrypt RSA
 //        PaymentResponse paymentTokenResponse = PayByToken.process(environment, orderId, requestId, String.valueOf(amount), orderInfo, returnURL, notifyURL, "", partnerClientId, token, Boolean.TRUE);
+
+        /***
+         * inquiry cbToken
+         */
+        partnerClientId = "sang.le@mservice.com.vn";
+        token = "ajkhsajshajhsaj"; // Token after received from binding and decrypt AES then encrypt RSA
+//        DeleteTokenResponse cbTokenInquiryResponse = DeleteToken.process(environment, orderId, requestId, partnerClientId, token);
 
     }
 
