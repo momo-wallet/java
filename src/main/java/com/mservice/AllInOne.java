@@ -30,6 +30,7 @@ public class AllInOne {
         String returnURL = "https://google.com.vn";
         String notifyURL = "https://google.com.vn";
         String callbackToken = "callbackToken";
+        String token = "";
 
         Environment environment = Environment.selectEnv("dev");
 
@@ -39,29 +40,30 @@ public class AllInOne {
         /***
          * create payment with capture momo wallet
          */
-//        PaymentResponse captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET);
-//
-//        orderId = String.valueOf(System.currentTimeMillis());
-//        requestId = String.valueOf(System.currentTimeMillis());
+        PaymentResponse captureWalletMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.CAPTURE_WALLET, Boolean.TRUE);
 
         /***
          * create payment with Momo's ATM type
          */
-//        PaymentResponse captureATMMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_ATM);
-//
-//        orderId = String.valueOf(System.currentTimeMillis());
-//        requestId = String.valueOf(System.currentTimeMillis());
-        //        Payment Method- Phương thức thanh toán MoMo's Credit
+
+        orderId = String.valueOf(System.currentTimeMillis());
+        requestId = String.valueOf(System.currentTimeMillis());
+        PaymentResponse captureATMMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_ATM, null);
+
         /***
          * create payment with Momo's Credit type
          */
-//        PaymentResponse captureCreditMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_CREDIT);
-//
-//        orderId = String.valueOf(System.currentTimeMillis());
-//        requestId = String.valueOf(System.currentTimeMillis());
+
+        orderId = String.valueOf(System.currentTimeMillis());
+        requestId = String.valueOf(System.currentTimeMillis());
+        PaymentResponse captureCreditMoMoResponse = CreateOrderMoMo.process(environment, orderId, requestId, Long.toString(amount), orderInfo, returnURL, notifyURL, "", RequestType.PAY_WITH_CREDIT, Boolean.TRUE);
+
         /***
          * confirm transaction with Momo's ATM type
          */
+
+        orderId = String.valueOf(System.currentTimeMillis());
+        requestId = String.valueOf(System.currentTimeMillis());
 //        ConfirmResponse confirmResponse = ConfirmTransaction.process(environment, orderId, requestId, Long.toString(amount), ConfirmRequestType.CAPTURE, "");
 
         /***
@@ -79,14 +81,22 @@ public class AllInOne {
          * inquiry cbToken
          */
         partnerClientId = "sang.le@mservice.com.vn";
-//        CbTokenInquiryResponse refundMoMoResponse = InquiryCbToken.process(environment, orderId, requestId, partnerClientId);
+//        CbTokenInquiryResponse cbTokenInquiryResponse = InquiryCbToken.process(environment, orderId, requestId, partnerClientId);
 
         /***
          * Binding Token
          */
         partnerClientId = "sang.le@mservice.com.vn";
         callbackToken = "abc"; // received from notification or cbToken Inquiry API
-//        BindingTokenResponse refundMoMoResponse = BindingToken.process(environment, orderId, requestId, partnerClientId, callbackToken);
+//        BindingTokenResponse bindingTokenResponse = BindingToken.process(environment, orderId, requestId, partnerClientId, callbackToken);
+
+        /***
+         * Pay By Token
+         */
+        partnerClientId = "sang.le@mservice.com.vn";
+        callbackToken = "abc"; // received from notification or cbToken Inquiry API
+        token = "ajkhsajshajhsaj"; // Token after received from binding and decrypt AES then encrupt RSA
+//        PaymentResponse paymentTokenResponse = PayByToken.process(environment, orderId, requestId, String.valueOf(amount), orderInfo, returnURL, notifyURL, "", partnerClientId, token, Boolean.TRUE);
 
     }
 

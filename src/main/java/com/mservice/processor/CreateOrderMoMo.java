@@ -34,11 +34,11 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
      * @return PaymentResponse
      **/
 
-    public static PaymentResponse process(Environment env, String orderId, String requestId, String amount, String orderInfo, String returnURL, String notifyURL, String extraData, com.mservice.enums.RequestType requestType) throws Exception {
+    public static PaymentResponse process(Environment env, String orderId, String requestId, String amount, String orderInfo, String returnURL, String notifyURL, String extraData, com.mservice.enums.RequestType requestType, Boolean autoCapture) throws Exception {
         try {
             CreateOrderMoMo m2Processor = new CreateOrderMoMo(env);
 
-            PaymentRequest request = m2Processor.createPaymentCreationRequest(orderId, requestId, amount, orderInfo, returnURL, notifyURL, extraData, requestType);
+            PaymentRequest request = m2Processor.createPaymentCreationRequest(orderId, requestId, amount, orderInfo, returnURL, notifyURL, extraData, requestType, autoCapture);
             PaymentResponse captureMoMoResponse = m2Processor.execute(request);
 
             return captureMoMoResponse;
@@ -90,7 +90,7 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
      * @return
      */
     public PaymentRequest createPaymentCreationRequest(String orderId, String requestId, String amount, String orderInfo,
-                                                           String returnUrl, String notifyUrl, String extraData, com.mservice.enums.RequestType requestType) {
+                                                           String returnUrl, String notifyUrl, String extraData, com.mservice.enums.RequestType requestType, Boolean autoCapture) {
 
         try {
             String requestRawData = new StringBuilder()
@@ -110,7 +110,7 @@ public class CreateOrderMoMo extends AbstractProcess<PaymentRequest, PaymentResp
             LogUtils.debug("[PaymentRequest] rawData: " + requestRawData + ", [Signature] -> " + signRequest);
 
             return new PaymentRequest(partnerInfo.getPartnerCode(), orderId, requestId, Language.EN, orderInfo, Long.valueOf(amount), "test MoMo", null, requestType,
-                    returnUrl, notifyUrl, "test store ID", extraData, null, true, null, signRequest);
+                    returnUrl, notifyUrl, "test store ID", extraData, null, autoCapture, null, signRequest);
         } catch (Exception e) {
             LogUtils.error("[PaymentRequest] "+ e);
         }
