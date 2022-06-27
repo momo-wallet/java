@@ -29,6 +29,7 @@ public class AllInOne {
         String orderInfo = "Pay With MoMo";
         String returnURL = "https://google.com.vn";
         String notifyURL = "https://google.com.vn";
+        String callbackToken = "callbackToken";
 
         Environment environment = Environment.selectEnv("dev");
 
@@ -79,6 +80,13 @@ public class AllInOne {
          */
         partnerClientId = "sang.le@mservice.com.vn";
 //        CbTokenInquiryResponse refundMoMoResponse = InquiryCbToken.process(environment, orderId, requestId, partnerClientId);
+
+        /***
+         * Binding Token
+         */
+        partnerClientId = "sang.le@mservice.com.vn";
+        callbackToken = "abc"; // received from notification or cbToken Inquiry API
+//        BindingTokenResponse refundMoMoResponse = BindingToken.process(environment, orderId, requestId, partnerClientId, callbackToken);
 
     }
 

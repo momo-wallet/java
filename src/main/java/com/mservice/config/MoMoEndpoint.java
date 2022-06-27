@@ -47,7 +47,7 @@ public class MoMoEndpoint {
         return endpoint + tokenBind;
     }
 
-    public String getTokenQueryCbInquiryUrl() {
+    public String getCbTokenInquiryUrl() {
         return endpoint + tokenCbInquiry;
     }
 
